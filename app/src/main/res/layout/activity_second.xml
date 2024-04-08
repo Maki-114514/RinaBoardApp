@@ -1,0 +1,231 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:app="http://schemas.android.com/apk/res-auto"
+	xmlns:tools="http://schemas.android.com/tools"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent"
+	tools:context=".SecondActivity">
+
+	<LinearLayout
+		android:layout_width="match_parent"
+		android:orientation="horizontal"
+		android:layout_height="match_parent">
+
+		<LinearLayout
+			android:layout_width="wrap_content"
+			android:layout_height="match_parent"
+			android:layout_marginStart="10dp"
+			android:orientation="vertical">
+
+			<LinearLayout
+				android:layout_width="wrap_content"
+				android:layout_height="80dp"
+				android:orientation="horizontal">
+
+				<ImageButton
+					android:layout_width="40dp"
+					android:id="@+id/bt_mainPage"
+					android:layout_marginStart="5dp"
+					android:layout_marginTop="10dp"
+					android:layout_height="50dp">
+				</ImageButton>
+
+				<ImageButton
+					android:layout_width="40dp"
+					android:id="@+id/bt_secondPage"
+					android:layout_marginTop="10dp"
+					android:layout_height="match_parent">
+				</ImageButton>
+
+				<ImageButton
+					android:layout_width="40dp"
+					android:id="@+id/bt_thirdPage"
+					android:layout_marginTop="10dp"
+					android:layout_marginEnd="5dp"
+					android:layout_height="50dp">
+				</ImageButton>
+			</LinearLayout>
+
+			<LinearLayout
+				android:layout_width="match_parent"
+				android:layout_height="match_parent"
+				android:orientation="vertical"
+				android:gravity="center">
+
+				<Button
+					android:layout_width="wrap_content"
+					android:id="@+id/bt_showExp"
+					android:text="显示表情"
+					android:textSize="15sp"
+					android:layout_height="wrap_content">
+				</Button>
+
+				<Button
+					android:layout_width="wrap_content"
+					android:id="@+id/bt_saveExp"
+					android:text="保存表情"
+					android:textSize="15sp"
+					android:layout_height="wrap_content">
+				</Button>
+
+				<Button
+					android:layout_width="wrap_content"
+					android:id="@+id/bt_existExp"
+					android:text="已有表情"
+					android:textSize="15sp"
+					android:layout_height="wrap_content">
+				</Button>
+
+				<LinearLayout
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content">
+
+				</LinearLayout>
+
+				<Button
+					android:layout_width="wrap_content"
+					android:id="@+id/bt_clearExp"
+					android:text="清除屏幕"
+					android:textSize="15sp"
+					android:layout_height="wrap_content">
+				</Button>
+
+				<Button
+					android:layout_width="wrap_content"
+					android:id="@+id/bt_fillExp"
+					android:text="填满屏幕"
+					android:textSize="15sp"
+					android:layout_marginBottom="20dp"
+					android:layout_height="wrap_content">
+				</Button>
+
+			</LinearLayout>
+		</LinearLayout>
+
+		<LinearLayout
+			android:layout_width="wrap_content"
+			android:layout_weight="13"
+			android:layout_height="match_parent"
+			android:orientation="horizontal">
+
+			<com.rinaboard.app.PixelDrawingView
+				android:id="@+id/pixelDrawingView"
+				android:layout_width="match_parent"
+				android:layout_height="match_parent"
+				android:layout_marginTop="10dp"
+				android:layout_marginBottom="10dp">
+			</com.rinaboard.app.PixelDrawingView>
+		</LinearLayout>
+
+		<LinearLayout
+			android:layout_width="wrap_content"
+			android:layout_weight="1"
+			android:layout_gravity="end"
+			android:layout_height="match_parent"
+			android:orientation="vertical"
+			android:gravity="center_horizontal">
+
+			<LinearLayout
+				android:layout_width="match_parent"
+				android:layout_height="60dp"
+				android:gravity="right">
+
+				<ImageView
+					android:layout_width="35dp"
+					android:layout_height="35dp"
+					android:layout_marginTop="15dp"
+					android:layout_marginEnd="20dp"
+					android:src="@drawable/setting"
+					android:id="@+id/bt_setting">
+				</ImageView>
+			</LinearLayout>
+
+			<ScrollView
+				android:layout_width="match_parent"
+				android:layout_weight="8"
+				android:layout_marginStart="10dp"
+				android:layout_marginEnd="10dp"
+				android:layout_height="wrap_content">
+
+				<LinearLayout
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:orientation="vertical">
+
+					<TextView
+						android:layout_width="wrap_content"
+						android:layout_marginStart="10dp"
+						android:text="眼部:"
+						android:textSize="20sp"
+						android:layout_height="wrap_content">
+					</TextView>
+
+					<ImageView
+						android:layout_width="match_parent"
+						android:background="#ff00ff"
+
+						android:layout_height="150dp">
+
+					</ImageView>
+
+					<TextView
+						android:layout_width="wrap_content"
+						android:layout_marginStart="10dp"
+						android:text="腮部:"
+						android:textSize="20sp"
+						android:layout_height="wrap_content">
+					</TextView>
+
+					<ImageView
+						android:layout_width="match_parent"
+						android:background="#ff00ff"
+
+						android:layout_height="150dp">
+
+					</ImageView>
+
+					<TextView
+						android:layout_width="wrap_content"
+						android:layout_marginStart="10dp"
+						android:text="嘴部:"
+						android:textSize="20sp"
+						android:layout_height="wrap_content">
+					</TextView>
+
+					<ImageView
+						android:layout_width="match_parent"
+						android:background="#ff00ff"
+
+						android:layout_height="150dp">
+
+					</ImageView>
+
+				</LinearLayout>
+
+			</ScrollView>
+
+			<LinearLayout
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:layout_weight="0"
+				android:layout_marginTop="10dp"
+				android:layout_marginBottom="10dp"
+				android:layout_gravity="bottom"
+				android:gravity="center">
+
+				<Button
+					android:layout_width="wrap_content"
+					android:id="@+id/bt_showBoardExp"
+					android:layout_marginEnd="20dp"
+					android:text="板上表情"
+					android:textSize="15sp"
+					android:layout_height="wrap_content">
+				</Button>
+			</LinearLayout>
+
+		</LinearLayout>
+
+	</LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
