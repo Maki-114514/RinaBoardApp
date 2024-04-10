@@ -4,9 +4,7 @@ package com.rinaboard.app;
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.view.View;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.ImageButton;
+import android.widget.*;
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 
@@ -18,6 +16,8 @@ public class SettingActivity extends AppCompatActivity {
     private ImageButton bt_mainPage;
     private ImageButton bt_secondPage;
     private ImageButton bt_thirdPage;
+    private ImageView iv_batteryDisplay;
+    private TextView tv_batteryVoltage;
     private EditText et_deviceName;
     private EditText et_wifiSSID;
     private EditText et_wifiPassword;
@@ -37,7 +37,7 @@ public class SettingActivity extends AppCompatActivity {
         connectThread1 = app.getConnectThread1();
         connectThread1.setOnConnectChangedListener(new ConnectThread.OnConnectChangedListener() {
             @Override
-            public void OnConnectChanged(ConnectState state) {
+            public void onConnectChanged(ConnectState state) {
                 switch (state) {
                     case CONNECTED://如果连接上了，那么就去向璃奈版发出请求并获得数据
                         System.out.println("Connect success");
@@ -47,26 +47,32 @@ public class SettingActivity extends AppCompatActivity {
 //                        } catch (Exception e) {
 //                            e.printStackTrace();
 //                        }
-                        //获取系统信息
-                        app.setDeviceName(GetDeviceName(udp1));
-                        app.setDeviceType(GetDeviceType(udp1));
-                        app.setWifiSSID(GetWifiSSID(udp1));
-                        app.setMode(GetSystemState(udp1));
+                        if(udp1 != null){
+                            //获取系统信息
+                            app.setDeviceName(GetDeviceName(udp1));
+                            app.setDeviceType(GetDeviceType(udp1));
+                            app.setWifiSSID(GetWifiSSID(udp1));
+                            app.setMode(GetSystemState(udp1));
 
-                        //颜色设置
-                        app.setCustomColor(GetColor(udp1));
-                        app.setBoardBrightness(GetBoardBrightness(udp1));
+                            //颜色设置
+                            app.setCustomColor(GetColor(udp1));
+                            app.setBoardBrightness(GetBoardBrightness(udp1));
 
-                        //灯条设置
-                        app.setLightState(GetLightState(udp1));
-                        app.setLightBrightness(GetLightBrightness(udp1));
+                            //灯条设置
+                            app.setLightState(GetLightState(udp1));
+                            app.setLightBrightness(GetLightBrightness(udp1));
 
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                bt_saveReboot.setEnabled(true);
-                            }
-                        });
+                            app.setBatteryVoltage(connectThread1.getVoltage());
+
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    bt_saveReboot.setEnabled(true);
+                                    String formattedString = String.format("%.1f", app.getBatteryVoltage());
+                                    tv_batteryVoltage.setText(formattedString + "V");
+                                }
+                            });
+                        }
                         break;
                     case DISCONNECT:
 
@@ -84,10 +90,14 @@ public class SettingActivity extends AppCompatActivity {
                         app.setLightState(true);
                         app.setLightBrightness(100);
 
+                        app.setBatteryVoltage(0.0f);
+
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
                                 bt_saveReboot.setEnabled(false);
+                                String formattedString = String.format("%.1f", app.getBatteryVoltage());
+                                tv_batteryVoltage.setText(formattedString + "V");
 
                                 AlertDialog.Builder builder = new AlertDialog.Builder(SettingActivity.this);
                                 builder.setTitle("警告");
@@ -98,6 +108,20 @@ public class SettingActivity extends AppCompatActivity {
                         });
                         System.out.println("View Update!");
                 }
+            }
+        });
+        connectThread1.setOnBatteryVoltageChangedListener(new ConnectThread.OnBatteryVoltageChangedListener() {
+            @Override
+            public void onBatteryVoltageChanged(float voltage) {
+                app.setBatteryVoltage(voltage);
+                System.out.println("The Battery voltage is " + voltage + "V");
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        String formattedString = String.format("%.1f", voltage);
+                        tv_batteryVoltage.setText(formattedString + "V");
+                    }
+                });
             }
         });
 
@@ -148,6 +172,11 @@ public class SettingActivity extends AppCompatActivity {
                 overridePendingTransition(0, 0);
             }
         });
+
+        iv_batteryDisplay = findViewById(R.id.iv_batteryDisplay);
+        tv_batteryVoltage = findViewById(R.id.tv_batteryVoltage);
+        String formattedString = String.format("%.1f", app.getBatteryVoltage());
+        tv_batteryVoltage.setText(formattedString + "V");
 
         et_deviceName = findViewById(R.id.et_deviceName);
         et_wifiSSID = findViewById(R.id.et_wifiSSID);

@@ -5,6 +5,8 @@ import android.graphics.Color;
 
 import java.net.*;
 
+import static com.rinaboard.app.PacketUtils.*;
+import static com.rinaboard.app.PacketUtils.GetLightBrightness;
 import static com.rinaboard.app.RinaBoardApp.SystemState.*;
 import static com.rinaboard.app.ConnectState.*;
 
@@ -15,10 +17,10 @@ public class RinaBoardApp extends Application {
     private ConnectThread connectThread1;
     private final int ROWS = 16;
     private final int COLS = 18;
-    private String deviceName;
-    private String deviceType;
-    private String ssid;
-    private String password;
+    private String deviceName = "";
+    private String deviceType = "";
+    private String ssid = "";
+    private String password = "";
     private int customColor = Color.parseColor("#FF1493");
     private int boardBrightness = 75;
     private boolean lightState = true;
@@ -26,6 +28,7 @@ public class RinaBoardApp extends Application {
     private SystemState mode = ExpressionMode;
     private final int rowBytes = (COLS + 7) / 8;
     private byte[] editBitmap = new byte[ROWS * rowBytes];
+    private float batteryVoltage = 0.0f;
 
     @Override
     public void onCreate() {
@@ -33,7 +36,7 @@ public class RinaBoardApp extends Application {
         super.onCreate();
         instance = this;
         startUDPSockets();
-        initConnectCheck();
+        startConnectCheck();
         //创建expression.json文件用于存储表情的键值对
         ExpressionFileManager.createExpressionJsonFile(getApplicationContext());
     }
@@ -57,19 +60,68 @@ public class RinaBoardApp extends Application {
 
     }
 
-    private void initConnectCheck() {
+    private void startConnectCheck() {
         connectThread1 = new ConnectThread(getApplicationContext());
         connectThread1.setOnConnectChangedListener(new ConnectThread.OnConnectChangedListener() {
             @Override
-            public void OnConnectChanged(ConnectState state) {
+            public void onConnectChanged(ConnectState state) {
                 if(state == CONNECTED){
+                    if(udp1 != null){
+                        //获取系统信息
+                        setDeviceName(GetDeviceName(udp1));
+                        setDeviceType(GetDeviceType(udp1));
+                        setWifiSSID(GetWifiSSID(udp1));
+                        setMode(GetSystemState(udp1));
+
+                        //颜色设置
+                        setCustomColor(GetColor(udp1));
+                        setBoardBrightness(GetBoardBrightness(udp1));
+
+                        //灯条设置
+                        setLightState(GetLightState(udp1));
+                        setLightBrightness(GetLightBrightness(udp1));
+
+                        setBatteryVoltage(connectThread1.getVoltage());
+                    }
                     System.out.println("Connect");
                 }else {
+                    //获取系统信息
+                    setDeviceName("");
+                    setDeviceType("");
+                    setWifiSSID("");
+                    setMode(ExpressionMode);
+
+                    //颜色设置
+                    setCustomColor(Color.parseColor("#FF1493"));
+                    setBoardBrightness(75);
+
+                    //灯条设置
+                    setLightState(true);
+                    setLightBrightness(127);
                     System.out.println("Disconnect");
+
+                    setBatteryVoltage(0.0f);
                 }
 
             }
         });
+
+        connectThread1.setOnBatteryVoltageChangedListener(new ConnectThread.OnBatteryVoltageChangedListener() {
+            @Override
+            public void onBatteryVoltageChanged(float voltage) {
+                setBatteryVoltage(voltage);
+            }
+        });
+
+        // 启动线程前先检查线程状态
+        if (connectThread1.getState() == Thread.State.NEW) {
+            connectThread1.start();
+            System.out.println("Connect checking thread has started");
+        } else {
+            System.out.println("Connect checking thread is already running");
+        }
+        
+        
     }
 
     public UDPInteraction getUdp1() {
@@ -158,6 +210,14 @@ public class RinaBoardApp extends Application {
 
     public void setEditBitmap(byte[] editBitmap) {
         this.editBitmap = editBitmap;
+    }
+
+    public float getBatteryVoltage() {
+        return batteryVoltage;
+    }
+
+    public void setBatteryVoltage(float batteryVoltage) {
+        this.batteryVoltage = batteryVoltage;
     }
 
     public enum SystemState {

@@ -49,7 +49,7 @@ public class SecondActivity extends AppCompatActivity {
         connectThread1 = app.getConnectThread1();
         connectThread1.setOnConnectChangedListener(new ConnectThread.OnConnectChangedListener() {
             @Override
-            public void OnConnectChanged(ConnectState state) {
+            public void onConnectChanged(ConnectState state) {
                 switch (state) {
                     case CONNECTED://如果连接上了，那么就去向璃奈版发出请求并获得数据
                         System.out.println("Connect success");
@@ -60,29 +60,30 @@ public class SecondActivity extends AppCompatActivity {
 //                        } catch (Exception e) {
 //                            e.printStackTrace();
 //                        }
+                        if(udp1 != null){
+                            //获取系统信息
+                            app.setDeviceName(GetDeviceName(udp1));
+                            app.setDeviceType(GetDeviceType(udp1));
+                            app.setWifiSSID(GetWifiSSID(udp1));
+                            app.setMode(GetSystemState(udp1));
 
-                        //获取系统信息
-                        app.setDeviceName(GetDeviceName(udp1));
-                        app.setDeviceType(GetDeviceType(udp1));
-                        app.setWifiSSID(GetWifiSSID(udp1));
-                        app.setMode(GetSystemState(udp1));
+                            //颜色设置
+                            app.setCustomColor(GetColor(udp1));
+                            app.setBoardBrightness(GetBoardBrightness(udp1));
 
-                        //颜色设置
-                        app.setCustomColor(GetColor(udp1));
-                        app.setBoardBrightness(GetBoardBrightness(udp1));
+                            //灯条设置
+                            app.setLightState(GetLightState(udp1));
+                            app.setLightBrightness(GetLightBrightness(udp1));
 
-                        //灯条设置
-                        app.setLightState(GetLightState(udp1));
-                        app.setLightBrightness(GetLightBrightness(udp1));
-
-                        //重绘UI
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                updateView(state);
-                            }
-                        });
-                        System.out.println("View Update!");
+                            //重绘UI
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    updateView(state);
+                                }
+                            });
+                            System.out.println("View Update!");
+                        }
                         break;
                     case DISCONNECT:
                         //获取系统信息

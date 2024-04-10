@@ -1,5 +1,7 @@
 package com.rinaboard.app;
 
+import androidx.annotation.NonNull;
+
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -35,7 +37,7 @@ public class PacketUtils {
     private static final byte LightBrightnessOver = (byte) 0x0F;
 
     //电量
-    private static final byte Electricity = (byte) 0x10;
+    public static final byte Electricity = (byte) 0x10;
 
     //系统
     private static final byte DeviceName = (byte) 0x12;
@@ -52,12 +54,12 @@ public class PacketUtils {
     //—————————————————————————————— 指令定义结束 ————————————————————————————————————————
 
     //——————————————————————————————————————————— 命令发送 ——————————————————————————————————————————
-    public static void ReBootBoard(UDPInteraction udp) {
+    public static void ReBootBoard(@NonNull UDPInteraction udp) {
         byte[] data = recombinePackage(CmdType.Set, DataName.REBOOT);
         udp.send(data);
     }
 
-    public static void SaveBitmapToBoard(UDPInteraction udp, String bitmapName) {
+    public static void SaveBitmapToBoard(@NonNull UDPInteraction udp, @NonNull String bitmapName) {
         byte[] data = recombinePackage(CmdType.Set,
                 DataName.SAVEBITMAP,
                 bitmapName.getBytes(StandardCharsets.UTF_8),
@@ -66,8 +68,7 @@ public class PacketUtils {
         udp.send(data);
     }
 
-    public static void DeleteBitmapOnBoard(UDPInteraction udp, String bitmapName)
-    {
+    public static void DeleteBitmapOnBoard(@NonNull UDPInteraction udp, @NonNull String bitmapName) {
         byte[] data = recombinePackage(CmdType.Set,
                 DataName.DELETEBITMAP,
                 bitmapName.getBytes(StandardCharsets.UTF_8),
@@ -76,8 +77,7 @@ public class PacketUtils {
         udp.send(data);
     }
 
-    public static void ChangeBitmapOnBoard(UDPInteraction udp, String bitmapName)
-    {
+    public static void ChangeBitmapOnBoard(@NonNull UDPInteraction udp, @NonNull String bitmapName) {
         byte[] data = recombinePackage(CmdType.Set,
                 DataName.CHANGEBITMAP,
                 bitmapName.getBytes(StandardCharsets.UTF_8),
@@ -86,22 +86,22 @@ public class PacketUtils {
         udp.send(data);
     }
 
-    public static void NextExpression(UDPInteraction udp){
+    public static void NextExpression(@NonNull UDPInteraction udp) {
         byte[] data = recombinePackage(CmdType.Set, DataName.NEXTEXPRESSION);
         udp.send(data);
     }
 
-    public static void LastExpression(UDPInteraction udp){
+    public static void LastExpression(@NonNull UDPInteraction udp) {
         byte[] data = recombinePackage(CmdType.Set, DataName.LASTEXPRESSION);
         udp.send(data);
     }
 
     //————————————————————————————————————————————— 信息获取 —————————————————————————————————————————
-    public static int GetColor(UDPInteraction udp) {
+    public static int GetColor(@NonNull UDPInteraction udp) {
         udp.send(getColorFromBoard());//告诉璃奈板获取颜色数据
         byte[] bytesData = udp.receive();
         if (bytesData.length != 4) {
-            System.out.println("Byte array length must be 4");
+            System.err.println("Byte array length must be 4");
             return 0;
         }
         return (((bytesData[0] | 0xFF) << 24) |
@@ -110,30 +110,30 @@ public class PacketUtils {
                 (bytesData[3] & 0xFF));
     }
 
-    public static int GetBoardBrightness(UDPInteraction udp) {
+    public static int GetBoardBrightness(@NonNull UDPInteraction udp) {
         udp.send(getBoardBrightnessFormBoard());//告诉璃奈板获取璃奈板亮度
         byte[] bytesData = udp.receive();
         if (bytesData.length != 1) {
-            System.out.println("Byte array length must be 1");
+            System.err.println("Byte array length must be 1");
             return 0;
         }
         return bytesData[0] & 0xFF;
     }
 
-    public static byte[] GetBitmap(UDPInteraction udp) {
+    public static byte[] GetBitmap(@NonNull UDPInteraction udp) {
         udp.send(getBitmapFromBoard());
         byte[] bitmap = udp.receive();
         if (bitmap.length != 48) {
-            System.out.println("Get the wrong bitmap data");
+            System.err.println("Get the wrong bitmap data");
             return null;
         }
         return bitmap;
     }
 
-    public static String[] getExpressionList(UDPInteraction udp){
+    public static String[] getExpressionList(@NonNull UDPInteraction udp) {
         udp.send(getExpressionListFromBoard());
         String input = udp.receiveString();
-        if(input != null){
+        if (input != null) {
             String[] subStrings = input.split("\\|");
 
             ArrayList<String> list = new ArrayList<>();
@@ -144,47 +144,61 @@ public class PacketUtils {
             // 将结果转换为数组
 
             return list.toArray(new String[0]);
-        }else {
+        } else {
             return null;
         }
     }
 
-    public static boolean GetLightState(UDPInteraction udp) {
+    public static boolean GetLightState(@NonNull UDPInteraction udp) {
         udp.send(getLightStateFromBoard());
         byte[] bytesData = udp.receive();
         if (bytesData.length != 1) {
-            System.out.println("Byte array length must be 1");
+            System.err.println("Byte array length must be 1");
             return false;
         }
         return bytesData[0] != 0;
     }
 
-    public static int GetLightBrightness(UDPInteraction udp) {
+    public static int GetLightBrightness(@NonNull UDPInteraction udp) {
         udp.send(getLightBrightnessFormBoard());//告诉璃奈板获取灯条亮度
         byte[] bytesData = udp.receive();
         if (bytesData.length != 1) {
-            System.out.println("Byte array length must be 1");
+            System.err.println("Byte array length must be 1");
             return 0;
         }
         return bytesData[0] & 0xFF;
     }
 
-    public static String GetDeviceName(UDPInteraction udp) {
+    public static float GetBatteryVoltage(@NonNull UDPInteraction udp) {
+        udp.send(getBatteryVoltageFromBoard());
+        byte[] bytesData = udp.receive();
+        if (bytesData.length != 4) {
+            System.err.println("Byte array length must be 4");
+            return -1.0f;
+        }
+        int result = ((bytesData[0] & 0xFF) << 24) |
+                ((bytesData[1] & 0xFF) << 16) |
+                ((bytesData[2] & 0xFF) << 8) |
+                (bytesData[3] & 0xFF);
+        return Float.intBitsToFloat(result);
+    }
+
+    public static String GetDeviceName(@NonNull UDPInteraction udp) {
         udp.send(getDeviceNameFormBoard());
         return udp.receiveString();
     }
 
-    public static String GetDeviceType(UDPInteraction udp) {
+    public static String GetDeviceType(@NonNull UDPInteraction udp) {
         udp.send(getDeviceTypeFromBoard());
         return udp.receiveString();
     }
 
-    public static String GetWifiSSID(UDPInteraction udp) {
+    public static String GetWifiSSID(@NonNull UDPInteraction udp) {
         udp.send(getWifiSSIDFromBoard());
         return udp.receiveString();
     }
 
-    public static RinaBoardApp.SystemState GetSystemState(UDPInteraction udp) {
+    public static RinaBoardApp.SystemState GetSystemState(@NonNull UDPInteraction udp) {
         udp.send(getSystemState());
         byte[] state = udp.receive();
         if (state.length != 1) {
@@ -285,7 +299,7 @@ public class PacketUtils {
         return recombinePackage(CmdType.Get, DataName.BITMAP);
     }
 
-    public static byte[] getExpressionListFromBoard(){
+    public static byte[] getExpressionListFromBoard() {
         return recombinePackage(CmdType.Get, DataName.EXPRESSIONLIST);
     }
 
@@ -295,6 +309,10 @@ public class PacketUtils {
 
     public static byte[] getLightBrightnessFormBoard() {
         return recombinePackage(CmdType.Get, DataName.LIGHTBRIGHTNESS);
+    }
+
+    public static byte[] getBatteryVoltageFromBoard() {
+        return recombinePackage(CmdType.Get, DataName.ELECTRICITY);
     }
 
     public static byte[] getDeviceNameFormBoard() {

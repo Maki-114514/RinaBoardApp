@@ -57,22 +57,39 @@
 		</LinearLayout>
 
 		<LinearLayout
-			android:layout_width="match_parent"
+			android:layout_width="0dp"
+			android:layout_weight="8"
 			android:layout_height="match_parent"
-			android:orientation="horizontal">
+			android:orientation="vertical">
+
+
+		</LinearLayout>
+
+		<LinearLayout
+			android:layout_width="0dp"
+			android:layout_weight="2"
+			android:layout_gravity="end"
+			android:layout_height="match_parent"
+			android:orientation="vertical">
 
 			<LinearLayout
-				android:layout_width="wrap_content"
-				android:layout_weight="1"
-				android:layout_gravity="right"
-				android:gravity="right"
-				android:layout_height="match_parent">
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:layout_marginTop="15dp"
+				android:layout_marginEnd="15dp"
+				android:gravity="right">
+
+				<ImageView
+					android:layout_width="40dp"
+					android:src="@drawable/battery_1"
+					android:layout_marginEnd="10dp"
+					android:id="@+id/iv_batteryDisplay"
+					android:layout_height="40dp">
+				</ImageView>
 
 				<ImageView
 					android:layout_width="35dp"
 					android:layout_height="35dp"
-					android:layout_marginTop="15dp"
-					android:layout_marginEnd="20dp"
 					android:src="@drawable/setting"
 					android:id="@+id/bt_setting">
 				</ImageView>

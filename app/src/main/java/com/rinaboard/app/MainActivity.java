@@ -24,6 +24,8 @@ public class MainActivity extends AppCompatActivity {
     private TextView tv_deviceType;
     private ImageButton bt_secondPage;
     private ImageButton bt_thirdPage;
+    private ImageView iv_batteryDisplay;
+    private TextView tv_batteryVoltage;
     private ImageView bt_setting;
     private Switch sw_expMod;
     private Switch sw_videoMod;
@@ -47,11 +49,13 @@ public class MainActivity extends AppCompatActivity {
         RinaBoardApp app = (RinaBoardApp) getApplication();
         //获取udp线程
         udp1 = app.getUdp1();
+
+
         //获取连接状态检测
         connectThread1 = app.getConnectThread1();
         connectThread1.setOnConnectChangedListener(new ConnectThread.OnConnectChangedListener() {
             @Override
-            public void OnConnectChanged(ConnectState state) {
+            public void onConnectChanged(ConnectState state) {
                 switch (state) {
                     case CONNECTED://如果连接上了，那么就去向璃奈版发出请求并获得数据
                         System.out.println("Connect success");
@@ -61,29 +65,32 @@ public class MainActivity extends AppCompatActivity {
 //                        } catch (Exception e) {
 //                            e.printStackTrace();
 //                        }
-                        //获取系统信息
-                        app.setDeviceName(GetDeviceName(udp1));
-                        app.setDeviceType(GetDeviceType(udp1));
-                        app.setWifiSSID(GetWifiSSID(udp1));
-                        app.setMode(GetSystemState(udp1));
+                        if (udp1 != null) {
+                            //获取系统信息
+                            app.setDeviceName(GetDeviceName(udp1));
+                            app.setDeviceType(GetDeviceType(udp1));
+                            app.setWifiSSID(GetWifiSSID(udp1));
+                            app.setMode(GetSystemState(udp1));
 
-                        //颜色设置
-                        app.setCustomColor(GetColor(udp1));
-                        app.setBoardBrightness(GetBoardBrightness(udp1));
+                            //颜色设置
+                            app.setCustomColor(GetColor(udp1));
+                            app.setBoardBrightness(GetBoardBrightness(udp1));
 
-                        //灯条设置
-                        app.setLightState(GetLightState(udp1));
-                        app.setLightBrightness(GetLightBrightness(udp1));
+                            //灯条设置
+                            app.setLightState(GetLightState(udp1));
+                            app.setLightBrightness(GetLightBrightness(udp1));
 
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                updateView(state);
-                            }
-                        });
+                            app.setBatteryVoltage(connectThread1.getVoltage());
+
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    updateView(state);
+                                }
+                            });
+                        }
                         break;
                     case DISCONNECT:
-
                         //获取系统信息
                         app.setDeviceName("");
                         app.setDeviceType("");
@@ -97,6 +104,8 @@ public class MainActivity extends AppCompatActivity {
                         //灯条设置
                         app.setLightState(true);
                         app.setLightBrightness(127);
+
+                        app.setBatteryVoltage(0.0f);
 
                         runOnUiThread(new Runnable() {
                             @Override
@@ -113,12 +122,21 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
+        connectThread1.setOnBatteryVoltageChangedListener(new ConnectThread.OnBatteryVoltageChangedListener() {
+            @Override
+            public void onBatteryVoltageChanged(float voltage) {
+                app.setBatteryVoltage(voltage);
+                System.out.println("The Battery voltage is " + voltage + "V");
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        String formattedString = String.format("%.1f", voltage);
+                        tv_batteryVoltage.setText(formattedString + "V");
+                    }
+                });
+            }
+        });
 
-        if (connectThread1.getState() == Thread.State.RUNNABLE || connectThread1.isAlive()) {
-            System.out.println("Connect checking thread has started");
-        } else {
-            connectThread1.start();
-        }
 
         //UI的init需要放在最后，否则在建立需要用到udp通讯的监听时，会出现udp1 = null而报错重启程序的情况
         initView();
@@ -167,6 +185,9 @@ public class MainActivity extends AppCompatActivity {
                 overridePendingTransition(0, 0);
             }
         });
+
+        iv_batteryDisplay = findViewById(R.id.iv_batteryDisplay);
+        tv_batteryVoltage = findViewById(R.id.tv_batteryVoltage);
 
         //连接状态显示文本
         tv_connectState = findViewById(R.id.tv_connectState);
@@ -369,6 +390,8 @@ public class MainActivity extends AppCompatActivity {
                 }).start();
             }
         });
+
+
     }
 
     private void updateView(ConnectState state) {
@@ -379,6 +402,9 @@ public class MainActivity extends AppCompatActivity {
         sb_boardBrightness.setProgress(app.getBoardBrightness());
         sw_lightState.setChecked(app.getLightState());
         sb_lightBrightness.setProgress(app.getLightBrightness());
+
+        String formattedString = String.format("%.1f", app.getBatteryVoltage());
+        tv_batteryVoltage.setText(formattedString + "V");
 
         switch (mode) {
             case ExpressionMode:
