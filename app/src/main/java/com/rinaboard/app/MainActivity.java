@@ -122,7 +122,7 @@ public class MainActivity extends AppCompatActivity {
 
         //UI的init需要放在最后，否则在建立需要用到udp通讯的监听时，会出现udp1 = null而报错重启程序的情况
         initView();
-        updateView(app.getConnectThread1().getConnectState());
+        updateView(connectThread1.getConnectState());
     }
 
     private void initView() {

@@ -134,7 +134,6 @@ public class PacketUtils {
         udp.send(getExpressionListFromBoard());
         String input = udp.receiveString();
         if(input != null){
-            input = input.replace("\r\n", "");
             String[] subStrings = input.split("\\|");
 
             ArrayList<String> list = new ArrayList<>();

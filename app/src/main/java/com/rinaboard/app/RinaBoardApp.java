@@ -34,6 +34,8 @@ public class RinaBoardApp extends Application {
         instance = this;
         startUDPSockets();
         initConnectCheck();
+        //创建expression.json文件用于存储表情的键值对
+        ExpressionFileManager.createExpressionJsonFile(getApplicationContext());
     }
 
     public static RinaBoardApp getInstance() {

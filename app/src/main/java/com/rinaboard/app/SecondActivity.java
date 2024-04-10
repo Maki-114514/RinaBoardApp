@@ -16,6 +16,7 @@ import android.os.Bundle;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 import static com.rinaboard.app.PacketUtils.*;
 import static com.rinaboard.app.RinaBoardApp.SystemState.ExpressionMode;
@@ -121,7 +122,7 @@ public class SecondActivity extends AppCompatActivity {
         }
         //UI的init需要放在最后，否则在建立需要用到udp通讯的监听时，会出现udp1 = null而报错重启程序的情况
         initView();
-        updateView(app.getConnectThread1().getConnectState());
+        updateView(connectThread1.getConnectState());
     }
 
     private void initView() {
@@ -262,6 +263,7 @@ public class SecondActivity extends AppCompatActivity {
     }
 
     private void showSaveBitmapDialog() {
+        RinaBoardApp app = (RinaBoardApp) getApplication();
         final AlertDialog[] dialog = new AlertDialog[1];
 
         // 创建一个 AlertDialog.Builder 对象
@@ -291,7 +293,7 @@ public class SecondActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 String bitmapName = editText.getText().toString();
-                if(!bitmapName.isEmpty()){
+                if (!bitmapName.isEmpty()) {
                     new Thread(new Runnable() {
                         @Override
                         public void run() {
@@ -312,7 +314,8 @@ public class SecondActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 String bitmapName = editText.getText().toString();
-                if(!bitmapName.isEmpty()){
+                if (!bitmapName.isEmpty()) {
+                    ExpressionFileManager.addKeyValuePair(getApplicationContext(), bitmapName, app.getEditBitmap());
                     dialog[0].dismiss();
                 }
             }
@@ -329,11 +332,12 @@ public class SecondActivity extends AppCompatActivity {
         // 创建并显示对话框
         dialog[0] = builder.create();
         dialog[0].show();
-
     }
 
     private void showExpressionDialog(Context context) {
         RinaBoardApp app = (RinaBoardApp) getApplication();
+
+        Map<String, byte[]>[] map = new Map[]{ExpressionFileManager.getMapFromJson(getApplicationContext())};
 
         final AlertDialog[] dialog = new AlertDialog[1];
 
@@ -348,10 +352,11 @@ public class SecondActivity extends AppCompatActivity {
 
         // 准备数据
         List<String> expOnBoard = new ArrayList<>();
-
         List<String> expOnLocal = new ArrayList<>();
-        for (int i = 0; i < 10; i++) {
-            expOnLocal.add("Right Item " + (i + 1));
+
+        String[] keys = ExpressionFileManager.getAllKeysFromMap(map[0]);
+        if (keys != null) {
+            expOnLocal.addAll(Arrays.asList(keys));
         }
 
         // 创建适配器
@@ -387,10 +392,9 @@ public class SecondActivity extends AppCompatActivity {
             public void onClick(View v) {
                 int selectedPosition1 = adapter1.getSelectedPosition();
                 int selectedPosition2 = adapter2.getSelectedPosition();
-                if(selectedPosition1 != -1)//如果左列表不是-1，则左列表被选中
-                {
+                if (selectedPosition1 != -1) {
                     String selectedItem = adapter1.getItem(selectedPosition1);
-                    if(selectedItem != null){
+                    if (selectedItem != null) {
                         new Thread(new Runnable() {
                             @Override
                             public void run() {
@@ -399,6 +403,15 @@ public class SecondActivity extends AppCompatActivity {
                                 pixelDrawingView.drawBitmap(app.getEditBitmap());
                             }
                         }).start();
+                    }
+                } else if (selectedPosition2 != -1) {
+                    String selectedItem = adapter2.getItem(selectedPosition2);
+                    if(selectedItem != null & map[0] != null){
+                        byte[] bitmap = map[0].get(selectedItem);
+                        if(bitmap != null){
+                            app.setEditBitmap(bitmap);
+                            pixelDrawingView.drawBitmap(bitmap);
+                        }
                     }
                 }
                 if (dialog[0] != null) {
@@ -411,10 +424,10 @@ public class SecondActivity extends AppCompatActivity {
             public void onClick(View v) {
                 int selectedPosition1 = adapter1.getSelectedPosition();
                 int selectedPosition2 = adapter2.getSelectedPosition();
-                if(selectedPosition1 != -1)//如果左列表不是-1，则左列表被选中
+                if (selectedPosition1 != -1)//如果左列表不是-1，则左列表被选中
                 {
                     String selectedItem = adapter1.getItem(selectedPosition1);
-                    if(selectedItem != null){
+                    if (selectedItem != null) {
                         new Thread(new Runnable() {
                             @Override
                             public void run() {
@@ -422,6 +435,12 @@ public class SecondActivity extends AppCompatActivity {
                                 System.out.println("Delete bitmap named " + selectedItem);
                             }
                         }).start();
+                    }
+                }else if(selectedPosition2 != -1){
+                    String selectedItem = adapter2.getItem(selectedPosition2);
+                    if(selectedItem != null){
+                        ExpressionFileManager.removeKey(getApplicationContext(), selectedItem);
+                        map[0] = ExpressionFileManager.getMapFromJson(getApplicationContext());
                     }
                 }
                 if (dialog[0] != null) {
@@ -448,7 +467,7 @@ public class SecondActivity extends AppCompatActivity {
             @Override
             public void run() {
                 String[] list = getExpressionList(udp1);
-                if(list != null){
+                if (list != null) {
                     List<String> newExpOnBoard = new ArrayList<String>(Arrays.asList(list)); // 获取更新后的数据
                     runOnUiThread(new Runnable() {
                         @Override
@@ -500,7 +519,7 @@ class MyAdapter extends ArrayAdapter<String> {
         notifyDataSetChanged(); // 刷新列表以更新视图
     }
 
-    public int getSelectedPosition(){
+    public int getSelectedPosition() {
         return selectedPosition;
     }
 }
