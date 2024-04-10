@@ -25,6 +25,7 @@ public class SecondActivity extends AppCompatActivity {
     private ImageButton bt_mainPage;
     private ImageButton bt_thirdPage;
     private ImageView bt_setting;
+    private ImageView iv_batteryDisplay;
     private Button bt_showExp;
     private Button bt_saveExp;
     private Button bt_existExp;
@@ -32,7 +33,6 @@ public class SecondActivity extends AppCompatActivity {
     private Button bt_clearExp;
     private Button bt_fillExp;
     private PixelDrawingView pixelDrawingView;
-
     private UDPInteraction udp1;
     private ConnectThread connectThread1;
 
@@ -54,12 +54,6 @@ public class SecondActivity extends AppCompatActivity {
                     case CONNECTED://如果连接上了，那么就去向璃奈版发出请求并获得数据
                         System.out.println("Connect success");
                         System.out.println();
-
-//                        try {
-//                            Thread.sleep(500);
-//                        } catch (Exception e) {
-//                            e.printStackTrace();
-//                        }
                         if(udp1 != null){
                             //获取系统信息
                             app.setDeviceName(GetDeviceName(udp1));
@@ -74,6 +68,8 @@ public class SecondActivity extends AppCompatActivity {
                             //灯条设置
                             app.setLightState(GetLightState(udp1));
                             app.setLightBrightness(GetLightBrightness(udp1));
+
+                            app.setBatteryVoltage(connectThread1.getVoltage());
 
                             //重绘UI
                             runOnUiThread(new Runnable() {
@@ -94,11 +90,13 @@ public class SecondActivity extends AppCompatActivity {
 
                         //颜色设置
                         app.setCustomColor(android.graphics.Color.parseColor("#FF1493"));
-                        app.setBoardBrightness(100);
+                        app.setBoardBrightness(75);
 
                         //灯条设置
                         app.setLightState(true);
-                        app.setLightBrightness(100);
+                        app.setLightBrightness(127);
+
+                        app.setBatteryVoltage(0.0f);
 
                         runOnUiThread(new Runnable() {
                             @Override
@@ -113,6 +111,28 @@ public class SecondActivity extends AppCompatActivity {
                         });
                         System.out.println("View Update!");
                 }
+            }
+        });
+        connectThread1.setOnBatteryVoltageChangedListener(new ConnectThread.OnBatteryVoltageChangedListener() {
+            @Override
+            public void onBatteryVoltageChanged(float voltage) {
+                app.setBatteryVoltage(voltage);
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (voltage >= 3.9f) {
+                            iv_batteryDisplay.setImageResource(R.drawable.battery_4);
+                        } else if (voltage >= 3.79f) {
+                            iv_batteryDisplay.setImageResource(R.drawable.battery_3);
+                        } else if (voltage >= 3.65f) {
+                            iv_batteryDisplay.setImageResource(R.drawable.battery_2);
+                        } else if (voltage >= 3.5f) {
+                            iv_batteryDisplay.setImageResource(R.drawable.battery_1);
+                        }else {
+                            iv_batteryDisplay.setImageResource(R.drawable.battery_0);
+                        }
+                    }
+                });
             }
         });
 
@@ -160,6 +180,9 @@ public class SecondActivity extends AppCompatActivity {
                 overridePendingTransition(0, 0);
             }
         });
+
+        //电量显示图标
+        iv_batteryDisplay = findViewById(R.id.iv_batteryDisplay);
 
         //像素绘图板
         pixelDrawingView = findViewById(R.id.pixelDrawingView);
@@ -243,6 +266,19 @@ public class SecondActivity extends AppCompatActivity {
 
     private void updateView(ConnectState state) {
         RinaBoardApp app = (RinaBoardApp) getApplication();
+
+        float voltage = app.getBatteryVoltage();
+        if (voltage >= 3.9f) {
+            iv_batteryDisplay.setImageResource(R.drawable.battery_4);
+        } else if (voltage >= 3.79f) {
+            iv_batteryDisplay.setImageResource(R.drawable.battery_3);
+        } else if (voltage >= 3.65f) {
+            iv_batteryDisplay.setImageResource(R.drawable.battery_2);
+        } else if (voltage >= 3.5f) {
+            iv_batteryDisplay.setImageResource(R.drawable.battery_1);
+        }else {
+            iv_batteryDisplay.setImageResource(R.drawable.battery_0);
+        }
 
         pixelDrawingView.setBackgroundColor(app.getCustomColor());
 

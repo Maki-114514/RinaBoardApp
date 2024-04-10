@@ -40,6 +40,7 @@ public class SecondVideoActivity extends AppCompatActivity {
     private ImageButton bt_mainPage;
     private ImageButton bt_thirdPage;
     private ImageView bt_setting;
+    private ImageView iv_batteryDisplay;
     private Button bt_updateVideo;
     private Button bt_controlVideo;
     private Switch sw_rollBack;
@@ -92,10 +93,29 @@ public class SecondVideoActivity extends AppCompatActivity {
                             //灯条设置
                             app.setLightState(GetLightState(udp1));
                             app.setLightBrightness(GetLightBrightness(udp1));
+
+                            app.setBatteryVoltage(connectThread1.getVoltage());
+
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    float voltage = app.getBatteryVoltage();
+                                    if (voltage >= 3.9f) {
+                                        iv_batteryDisplay.setImageResource(R.drawable.battery_4);
+                                    } else if (voltage >= 3.79f) {
+                                        iv_batteryDisplay.setImageResource(R.drawable.battery_3);
+                                    } else if (voltage >= 3.65f) {
+                                        iv_batteryDisplay.setImageResource(R.drawable.battery_2);
+                                    } else if (voltage >= 3.5f) {
+                                        iv_batteryDisplay.setImageResource(R.drawable.battery_1);
+                                    }else {
+                                        iv_batteryDisplay.setImageResource(R.drawable.battery_0);
+                                    }
+                                }
+                            });
                         }
                         break;
                     case DISCONNECT:
-
                         //获取系统信息
                         app.setDeviceName("");
                         app.setDeviceType("");
@@ -104,11 +124,13 @@ public class SecondVideoActivity extends AppCompatActivity {
 
                         //颜色设置
                         app.setCustomColor(Color.parseColor("#FF1493"));
-                        app.setBoardBrightness(100);
+                        app.setBoardBrightness(75);
 
                         //灯条设置
                         app.setLightState(true);
-                        app.setLightBrightness(100);
+                        app.setLightBrightness(127);
+
+                        app.setBatteryVoltage(0.0f);
 
                         runOnUiThread(new Runnable() {
                             @Override
@@ -132,6 +154,30 @@ public class SecondVideoActivity extends AppCompatActivity {
                 }
             }
         });
+        connectThread1.setOnBatteryVoltageChangedListener(new ConnectThread.OnBatteryVoltageChangedListener() {
+            @Override
+            public void onBatteryVoltageChanged(float voltage) {
+                app.setBatteryVoltage(voltage);
+                System.out.println("The Battery voltage is " + voltage + "V");
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (voltage >= 3.9f) {
+                            iv_batteryDisplay.setImageResource(R.drawable.battery_4);
+                        } else if (voltage >= 3.79f) {
+                            iv_batteryDisplay.setImageResource(R.drawable.battery_3);
+                        } else if (voltage >= 3.65f) {
+                            iv_batteryDisplay.setImageResource(R.drawable.battery_2);
+                        } else if (voltage >= 3.5f) {
+                            iv_batteryDisplay.setImageResource(R.drawable.battery_1);
+                        }else {
+                            iv_batteryDisplay.setImageResource(R.drawable.battery_0);
+                        }
+                    }
+                });
+            }
+        });
+
         if (!OpenCVLoader.initDebug()) {
             Log.i("cv", "Internal OpenCV library not found. Using OpenCV Manager for initialization");
         } else {
@@ -225,6 +271,8 @@ public class SecondVideoActivity extends AppCompatActivity {
         }
     }
     private void initView() {
+        RinaBoardApp app = (RinaBoardApp) getApplication();
+
         bt_mainPage = findViewById(R.id.bt_mainPage);
         bt_mainPage.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -255,6 +303,21 @@ public class SecondVideoActivity extends AppCompatActivity {
                 overridePendingTransition(0, 0);
             }
         });
+
+        //电量显示图标
+        iv_batteryDisplay = findViewById(R.id.iv_batteryDisplay);
+        float voltage = app.getBatteryVoltage();
+        if (voltage >= 3.9f) {
+            iv_batteryDisplay.setImageResource(R.drawable.battery_4);
+        } else if (voltage >= 3.79f) {
+            iv_batteryDisplay.setImageResource(R.drawable.battery_3);
+        } else if (voltage >= 3.65f) {
+            iv_batteryDisplay.setImageResource(R.drawable.battery_2);
+        } else if (voltage >= 3.5f) {
+            iv_batteryDisplay.setImageResource(R.drawable.battery_1);
+        }else {
+            iv_batteryDisplay.setImageResource(R.drawable.battery_0);
+        }
 
         //视频选择按钮
         bt_updateVideo = findViewById(R.id.bt_updateVideo);

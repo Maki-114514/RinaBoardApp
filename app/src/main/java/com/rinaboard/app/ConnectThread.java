@@ -98,7 +98,7 @@ public class ConnectThread extends Thread {
                             if(bytes != null){
                                 int result = ((bytes[3] & 0xFF) << 24) | ((bytes[2] & 0xFF) << 16) | ((bytes[1] & 0xFF) << 8) | (bytes[0] & 0xFF);
                                 voltage = Float.intBitsToFloat(result);
-                                if(Math.abs(voltage - lastVoltage) >= 0.1){
+                                if(Math.abs(voltage - lastVoltage) >= 0.01){
                                     lastVoltage = voltage;
                                     if(onBatteryVoltageChangedListener != null){
                                         onBatteryVoltageChangedListener.onBatteryVoltageChanged(voltage);

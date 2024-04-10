@@ -50,7 +50,6 @@ public class MainActivity extends AppCompatActivity {
         //获取udp线程
         udp1 = app.getUdp1();
 
-
         //获取连接状态检测
         connectThread1 = app.getConnectThread1();
         connectThread1.setOnConnectChangedListener(new ConnectThread.OnConnectChangedListener() {
@@ -60,11 +59,6 @@ public class MainActivity extends AppCompatActivity {
                     case CONNECTED://如果连接上了，那么就去向璃奈版发出请求并获得数据
                         System.out.println("Connect success");
                         System.out.println();
-//                        try {
-//                            Thread.sleep(500);
-//                        } catch (Exception e) {
-//                            e.printStackTrace();
-//                        }
                         if (udp1 != null) {
                             //获取系统信息
                             app.setDeviceName(GetDeviceName(udp1));
@@ -115,6 +109,7 @@ public class MainActivity extends AppCompatActivity {
                                 builder.setMessage("璃奈板连接丢失");
                                 AlertDialog alertDialog = builder.create();
                                 alertDialog.show();
+
                                 updateView(state);
                             }
                         });
@@ -132,6 +127,17 @@ public class MainActivity extends AppCompatActivity {
                     public void run() {
                         String formattedString = String.format("%.1f", voltage);
                         tv_batteryVoltage.setText(formattedString + "V");
+                        if (voltage >= 3.9f) {
+                            iv_batteryDisplay.setImageResource(R.drawable.battery_4);
+                        } else if (voltage >= 3.79f) {
+                            iv_batteryDisplay.setImageResource(R.drawable.battery_3);
+                        } else if (voltage >= 3.65f) {
+                            iv_batteryDisplay.setImageResource(R.drawable.battery_2);
+                        } else if (voltage >= 3.5f) {
+                            iv_batteryDisplay.setImageResource(R.drawable.battery_1);
+                        }else {
+                            iv_batteryDisplay.setImageResource(R.drawable.battery_0);
+                        }
                     }
                 });
             }
@@ -186,6 +192,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        //电量显示图标
         iv_batteryDisplay = findViewById(R.id.iv_batteryDisplay);
         tv_batteryVoltage = findViewById(R.id.tv_batteryVoltage);
 
@@ -403,8 +410,20 @@ public class MainActivity extends AppCompatActivity {
         sw_lightState.setChecked(app.getLightState());
         sb_lightBrightness.setProgress(app.getLightBrightness());
 
-        String formattedString = String.format("%.1f", app.getBatteryVoltage());
+        float voltage = app.getBatteryVoltage();
+        String formattedString = String.format("%.1f", voltage);
         tv_batteryVoltage.setText(formattedString + "V");
+        if (voltage >= 3.9f) {
+            iv_batteryDisplay.setImageResource(R.drawable.battery_4);
+        } else if (voltage >= 3.79f) {
+            iv_batteryDisplay.setImageResource(R.drawable.battery_3);
+        } else if (voltage >= 3.65f) {
+            iv_batteryDisplay.setImageResource(R.drawable.battery_2);
+        } else if (voltage >= 3.5f) {
+            iv_batteryDisplay.setImageResource(R.drawable.battery_1);
+        }else {
+            iv_batteryDisplay.setImageResource(R.drawable.battery_0);
+        }
 
         switch (mode) {
             case ExpressionMode:

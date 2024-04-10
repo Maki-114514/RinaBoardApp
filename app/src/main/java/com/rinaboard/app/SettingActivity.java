@@ -68,8 +68,22 @@ public class SettingActivity extends AppCompatActivity {
                                 @Override
                                 public void run() {
                                     bt_saveReboot.setEnabled(true);
-                                    String formattedString = String.format("%.1f", app.getBatteryVoltage());
+
+                                    float voltage = app.getBatteryVoltage();
+                                    String formattedString = String.format("%.1f", voltage);
                                     tv_batteryVoltage.setText(formattedString + "V");
+                                    tv_batteryVoltage.setText(formattedString + "V");
+                                    if (voltage >= 3.9f) {
+                                        iv_batteryDisplay.setImageResource(R.drawable.battery_4);
+                                    } else if (voltage >= 3.79f) {
+                                        iv_batteryDisplay.setImageResource(R.drawable.battery_3);
+                                    } else if (voltage >= 3.65f) {
+                                        iv_batteryDisplay.setImageResource(R.drawable.battery_2);
+                                    } else if (voltage >= 3.5f) {
+                                        iv_batteryDisplay.setImageResource(R.drawable.battery_1);
+                                    }else {
+                                        iv_batteryDisplay.setImageResource(R.drawable.battery_0);
+                                    }
                                 }
                             });
                         }
@@ -96,8 +110,22 @@ public class SettingActivity extends AppCompatActivity {
                             @Override
                             public void run() {
                                 bt_saveReboot.setEnabled(false);
-                                String formattedString = String.format("%.1f", app.getBatteryVoltage());
+
+                                float voltage = app.getBatteryVoltage();
+                                String formattedString = String.format("%.1f", voltage);
                                 tv_batteryVoltage.setText(formattedString + "V");
+                                tv_batteryVoltage.setText(formattedString + "V");
+                                if (voltage >= 3.9f) {
+                                    iv_batteryDisplay.setImageResource(R.drawable.battery_4);
+                                } else if (voltage >= 3.79f) {
+                                    iv_batteryDisplay.setImageResource(R.drawable.battery_3);
+                                } else if (voltage >= 3.65f) {
+                                    iv_batteryDisplay.setImageResource(R.drawable.battery_2);
+                                } else if (voltage >= 3.5f) {
+                                    iv_batteryDisplay.setImageResource(R.drawable.battery_1);
+                                }else {
+                                    iv_batteryDisplay.setImageResource(R.drawable.battery_0);
+                                }
 
                                 AlertDialog.Builder builder = new AlertDialog.Builder(SettingActivity.this);
                                 builder.setTitle("警告");
@@ -120,6 +148,17 @@ public class SettingActivity extends AppCompatActivity {
                     public void run() {
                         String formattedString = String.format("%.1f", voltage);
                         tv_batteryVoltage.setText(formattedString + "V");
+                        if (voltage >= 3.9f) {
+                            iv_batteryDisplay.setImageResource(R.drawable.battery_4);
+                        } else if (voltage >= 3.79f) {
+                            iv_batteryDisplay.setImageResource(R.drawable.battery_3);
+                        } else if (voltage >= 3.65f) {
+                            iv_batteryDisplay.setImageResource(R.drawable.battery_2);
+                        } else if (voltage >= 3.5f) {
+                            iv_batteryDisplay.setImageResource(R.drawable.battery_1);
+                        }else {
+                            iv_batteryDisplay.setImageResource(R.drawable.battery_0);
+                        }
                     }
                 });
             }
@@ -175,8 +214,21 @@ public class SettingActivity extends AppCompatActivity {
 
         iv_batteryDisplay = findViewById(R.id.iv_batteryDisplay);
         tv_batteryVoltage = findViewById(R.id.tv_batteryVoltage);
-        String formattedString = String.format("%.1f", app.getBatteryVoltage());
+        float voltage = app.getBatteryVoltage();
+        String formattedString = String.format("%.1f", voltage);
         tv_batteryVoltage.setText(formattedString + "V");
+        tv_batteryVoltage.setText(formattedString + "V");
+        if (voltage >= 3.9f) {
+            iv_batteryDisplay.setImageResource(R.drawable.battery_4);
+        } else if (voltage >= 3.79f) {
+            iv_batteryDisplay.setImageResource(R.drawable.battery_3);
+        } else if (voltage >= 3.65f) {
+            iv_batteryDisplay.setImageResource(R.drawable.battery_2);
+        } else if (voltage >= 3.5f) {
+            iv_batteryDisplay.setImageResource(R.drawable.battery_1);
+        }else {
+            iv_batteryDisplay.setImageResource(R.drawable.battery_0);
+        }
 
         et_deviceName = findViewById(R.id.et_deviceName);
         et_wifiSSID = findViewById(R.id.et_wifiSSID);

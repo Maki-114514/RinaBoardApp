@@ -55,7 +55,7 @@
 					<ImageView
 						android:layout_width="40dp"
 						android:id="@+id/iv_batteryDisplay"
-						android:src="@drawable/battery_1"
+						android:src="@drawable/battery_0"
 						android:layout_height="wrap_content">
 					</ImageView>
 					<TextView

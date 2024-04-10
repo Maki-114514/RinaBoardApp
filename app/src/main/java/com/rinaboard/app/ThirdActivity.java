@@ -17,6 +17,7 @@ public class ThirdActivity extends AppCompatActivity {
     private ImageButton bt_mainPage;
     private ImageButton bt_secondPage;
     private ImageView bt_setting;
+    private ImageView iv_batteryDisplay;
     private UDPInteraction udp1;
     private ConnectThread connectThread1;
 
@@ -57,10 +58,12 @@ public class ThirdActivity extends AppCompatActivity {
                             app.setLightState(GetLightState(udp1));
                             app.setLightBrightness(GetLightBrightness(udp1));
 
+                            app.setBatteryVoltage(connectThread1.getVoltage());
+
                             runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
-
+                                    updateView(state);
                                 }
                             });
                         }
@@ -81,6 +84,8 @@ public class ThirdActivity extends AppCompatActivity {
                         app.setLightState(true);
                         app.setLightBrightness(100);
 
+                        app.setBatteryVoltage(0.0f);
+
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
@@ -89,12 +94,32 @@ public class ThirdActivity extends AppCompatActivity {
                                 builder.setMessage("璃奈板连接丢失");
                                 AlertDialog alertDialog = builder.create();
                                 alertDialog.show();
+
+                                updateView(state);
                             }
                         });
                         System.out.println("View Update!");
                 }
             }
         });
+        connectThread1.setOnBatteryVoltageChangedListener(new ConnectThread.OnBatteryVoltageChangedListener() {
+            @Override
+            public void onBatteryVoltageChanged(float voltage) {
+                app.setBatteryVoltage(voltage);
+                if (voltage >= 3.9f) {
+                    iv_batteryDisplay.setImageResource(R.drawable.battery_4);
+                } else if (voltage >= 3.79f) {
+                    iv_batteryDisplay.setImageResource(R.drawable.battery_3);
+                } else if (voltage >= 3.65f) {
+                    iv_batteryDisplay.setImageResource(R.drawable.battery_2);
+                } else if (voltage >= 3.5f) {
+                    iv_batteryDisplay.setImageResource(R.drawable.battery_1);
+                }else {
+                    iv_batteryDisplay.setImageResource(R.drawable.battery_0);
+                }
+            }
+        });
+
         //UI的init需要放在最后，否则在建立需要用到udp通讯的监听时，会出现udp1 = null而报错重启程序的情况
         initView();
     }
@@ -140,5 +165,27 @@ public class ThirdActivity extends AppCompatActivity {
                 overridePendingTransition(0, 0);
             }
         });
+
+        //电量显示图标
+        iv_batteryDisplay = findViewById(R.id.iv_batteryDisplay);
+
+        updateView(connectThread1.getConnectState());
+    }
+
+    private void updateView(ConnectState state){
+        RinaBoardApp app = (RinaBoardApp) getApplication();
+
+        float voltage = app.getBatteryVoltage();
+        if (voltage >= 3.9f) {
+            iv_batteryDisplay.setImageResource(R.drawable.battery_4);
+        } else if (voltage >= 3.79f) {
+            iv_batteryDisplay.setImageResource(R.drawable.battery_3);
+        } else if (voltage >= 3.65f) {
+            iv_batteryDisplay.setImageResource(R.drawable.battery_2);
+        } else if (voltage >= 3.5f) {
+            iv_batteryDisplay.setImageResource(R.drawable.battery_1);
+        }else {
+            iv_batteryDisplay.setImageResource(R.drawable.battery_0);
+        }
     }
 }
