@@ -148,7 +148,7 @@ public class PixelDrawingView extends GridLayout {
         }
         // 在循环结束后调用onBitmapUpdated()方法
         if (bitmapUpdateListener != null) {
-            bitmapUpdateListener.onBitmapUpdated(getBitmap());
+            bitmapUpdateListener.onBitmapUpdated(bitmap);
         }
     }
 
@@ -187,6 +187,38 @@ public class PixelDrawingView extends GridLayout {
             }
         }
         bitmap = img;
+        // 在循环结束后调用onBitmapUpdated()方法
+        if (bitmapUpdateListener != null) {
+            bitmapUpdateListener.onBitmapUpdated(bitmap);
+        }
+    }
+
+    /**
+     * 局部改变图像，用于使用预定义的表情
+     *
+     * @param img:要传入的图像
+     * @param y:要改变区域的起始y坐标
+     * @param height:要改变的区域的高度
+     */
+    private void changeBitmap(byte[] img, int y, int height) {
+        for (int row = y; row < y + height; row++) {
+            for (int col = 0; col < rowBytes; col++) {
+                bitmap[row * rowBytes + col] = img[(row - y) * rowBytes + col];
+            }
+        }
+        drawBitmap(bitmap);
+    }
+
+    public void changeEyes(byte[] img) {
+        changeBitmap(img, 0, 7);
+    }
+
+    public void changeCheek(byte[] img) {
+        changeBitmap(img, 7, 3);
+    }
+
+    public void changeMouth(byte[] img) {
+        changeBitmap(img, 10, 6);
     }
 
     public void turnOffAllButtons() {

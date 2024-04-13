@@ -3,6 +3,7 @@ package com.rinaboard.app;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -33,6 +34,10 @@ public class SecondActivity extends AppCompatActivity {
     private Button bt_clearExp;
     private Button bt_fillExp;
     private PixelDrawingView pixelDrawingView;
+    private ImageView[] iv_eyesBitmaps = new ImageView[PreExpression.Eyes.num];
+    private ImageView[] iv_cheekBitmaps = new ImageView[PreExpression.Cheek.num];
+    private ImageView[] iv_mouthBitmaps = new ImageView[PreExpression.Mouth.num];
+    private Button[] bt_clears = new Button[3];
     private UDPInteraction udp1;
     private ConnectThread connectThread1;
 
@@ -54,7 +59,7 @@ public class SecondActivity extends AppCompatActivity {
                     case CONNECTED://如果连接上了，那么就去向璃奈版发出请求并获得数据
                         System.out.println("Connect success");
                         System.out.println();
-                        if(udp1 != null){
+                        if (udp1 != null) {
                             //获取系统信息
                             app.setDeviceName(GetDeviceName(udp1));
                             app.setDeviceType(GetDeviceType(udp1));
@@ -128,7 +133,7 @@ public class SecondActivity extends AppCompatActivity {
                             iv_batteryDisplay.setImageResource(R.drawable.battery_2);
                         } else if (voltage >= 3.5f) {
                             iv_batteryDisplay.setImageResource(R.drawable.battery_1);
-                        }else {
+                        } else {
                             iv_batteryDisplay.setImageResource(R.drawable.battery_0);
                         }
                     }
@@ -262,6 +267,87 @@ public class SecondActivity extends AppCompatActivity {
             }
         });
 
+        iv_eyesBitmaps[0] = findViewById(R.id.iv_eyesBitmap1);
+        iv_eyesBitmaps[1] = findViewById(R.id.iv_eyesBitmap2);
+        iv_eyesBitmaps[2] = findViewById(R.id.iv_eyesBitmap3);
+        iv_eyesBitmaps[3] = findViewById(R.id.iv_eyesBitmap4);
+        iv_eyesBitmaps[4] = findViewById(R.id.iv_eyesBitmap5);
+        iv_eyesBitmaps[5] = findViewById(R.id.iv_eyesBitmap6);
+        iv_eyesBitmaps[6] = findViewById(R.id.iv_eyesBitmap7);
+        iv_eyesBitmaps[7] = findViewById(R.id.iv_eyesBitmap8);
+        for (int i = 0; i < PreExpression.Eyes.num; i++) {
+            iv_eyesBitmaps[i].setImageBitmap(convertByteArrayToBitmap(PreExpression.Eyes.bitmaps[i], 18, 7, app.getCustomColor()));
+            int finalI = i;
+            iv_eyesBitmaps[i].setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    pixelDrawingView.changeEyes(PreExpression.Eyes.bitmaps[finalI]);
+                }
+            });
+        }
+
+        iv_cheekBitmaps[0] = findViewById(R.id.iv_cheekBitmap1);
+        iv_cheekBitmaps[1] = findViewById(R.id.iv_cheekBitmap2);
+        iv_cheekBitmaps[2] = findViewById(R.id.iv_cheekBitmap3);
+        iv_cheekBitmaps[3] = findViewById(R.id.iv_cheekBitmap4);
+        iv_cheekBitmaps[4] = findViewById(R.id.iv_cheekBitmap5);
+        for (int i = 0; i < PreExpression.Cheek.num; i++) {
+            iv_cheekBitmaps[i].setImageBitmap(convertByteArrayToBitmap(PreExpression.Cheek.bitmaps[i], 18, 3, app.getCustomColor()));
+            int finalI = i;
+            iv_cheekBitmaps[i].setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    pixelDrawingView.changeCheek(PreExpression.Cheek.bitmaps[finalI]);
+                }
+            });
+        }
+
+        iv_mouthBitmaps[0] = findViewById(R.id.iv_mouthBitmap1);
+        iv_mouthBitmaps[1] = findViewById(R.id.iv_mouthBitmap2);
+        iv_mouthBitmaps[2] = findViewById(R.id.iv_mouthBitmap3);
+        iv_mouthBitmaps[3] = findViewById(R.id.iv_mouthBitmap4);
+        iv_mouthBitmaps[4] = findViewById(R.id.iv_mouthBitmap5);
+        iv_mouthBitmaps[5] = findViewById(R.id.iv_mouthBitmap6);
+        iv_mouthBitmaps[6] = findViewById(R.id.iv_mouthBitmap7);
+        iv_mouthBitmaps[7] = findViewById(R.id.iv_mouthBitmap8);
+        iv_mouthBitmaps[8] = findViewById(R.id.iv_mouthBitmap9);
+        iv_mouthBitmaps[9] = findViewById(R.id.iv_mouthBitmap10);
+        iv_mouthBitmaps[10] = findViewById(R.id.iv_mouthBitmap11);
+        iv_mouthBitmaps[11] = findViewById(R.id.iv_mouthBitmap12);
+        iv_mouthBitmaps[12] = findViewById(R.id.iv_mouthBitmap13);
+        for (int i = 0; i < PreExpression.Mouth.num; i++) {
+            iv_mouthBitmaps[i].setImageBitmap(convertByteArrayToBitmap(PreExpression.Mouth.bitmaps[i], 18, 6, app.getCustomColor()));
+            int finalI = i;
+            iv_mouthBitmaps[i].setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    pixelDrawingView.changeMouth(PreExpression.Mouth.bitmaps[finalI]);
+                }
+            });
+        }
+
+
+        bt_clears[0] = findViewById(R.id.bt_clearEyes);
+        bt_clears[1] = findViewById(R.id.bt_clearCheek);
+        bt_clears[2] = findViewById(R.id.bt_clearMouth);
+        bt_clears[0].setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                pixelDrawingView.changeEyes(PreExpression.Eyes.clearBitmap);
+            }
+        });
+        bt_clears[1].setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                pixelDrawingView.changeCheek(PreExpression.Cheek.clearBitmap);
+            }
+        });
+        bt_clears[2].setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                pixelDrawingView.changeMouth(PreExpression.Mouth.clearBitmap);
+            }
+        });
     }
 
     private void updateView(ConnectState state) {
@@ -276,7 +362,7 @@ public class SecondActivity extends AppCompatActivity {
             iv_batteryDisplay.setImageResource(R.drawable.battery_2);
         } else if (voltage >= 3.5f) {
             iv_batteryDisplay.setImageResource(R.drawable.battery_1);
-        }else {
+        } else {
             iv_batteryDisplay.setImageResource(R.drawable.battery_0);
         }
 
@@ -443,9 +529,9 @@ public class SecondActivity extends AppCompatActivity {
                     }
                 } else if (selectedPosition2 != -1) {
                     String selectedItem = adapter2.getItem(selectedPosition2);
-                    if(selectedItem != null & map[0] != null){
+                    if (selectedItem != null & map[0] != null) {
                         byte[] bitmap = map[0].get(selectedItem);
-                        if(bitmap != null){
+                        if (bitmap != null) {
                             app.setEditBitmap(bitmap);
                             pixelDrawingView.drawBitmap(bitmap);
                         }
@@ -473,9 +559,9 @@ public class SecondActivity extends AppCompatActivity {
                             }
                         }).start();
                     }
-                }else if(selectedPosition2 != -1){
+                } else if (selectedPosition2 != -1) {
                     String selectedItem = adapter2.getItem(selectedPosition2);
-                    if(selectedItem != null){
+                    if (selectedItem != null) {
                         ExpressionFileManager.removeKey(getApplicationContext(), selectedItem);
                         map[0] = ExpressionFileManager.getMapFromJson(getApplicationContext());
                     }
@@ -518,6 +604,24 @@ public class SecondActivity extends AppCompatActivity {
             }
         }).start();
 
+    }
+
+    public Bitmap convertByteArrayToBitmap(byte[] byteArray, int width, int height, int color) {
+        Bitmap bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.RGB_565);
+
+        int rowBytes = (width + 7) / 8;
+
+        int byteIndex = 0;
+        for (int y = 0; y < height; y++) {
+            for (int x = 0; x < width; x++) {
+                int bitIndex = x % 8;
+                int colorIndex = byteIndex + (x / 8);
+                int bit = (byteArray[colorIndex] & (1 << (7 - bitIndex))) == 0 ? Color.WHITE : color;
+                bitmap.setPixel(x, y, bit);
+            }
+            byteIndex += rowBytes;
+        }
+        return Bitmap.createScaledBitmap(bitmap, width * 25, height * 25, false);
     }
 }
 

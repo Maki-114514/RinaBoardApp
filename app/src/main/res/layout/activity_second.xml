@@ -170,11 +170,74 @@
 
 					<ImageView
 						android:layout_width="match_parent"
-						android:background="#ff00ff"
-
-						android:layout_height="150dp">
-
+						android:id="@+id/iv_eyesBitmap1"
+						android:scaleType="centerInside"
+						android:layout_marginBottom="10dp"
+						android:layout_height="50dp">
 					</ImageView>
+
+					<ImageView
+						android:layout_width="match_parent"
+						android:id="@+id/iv_eyesBitmap2"
+						android:scaleType="centerInside"
+						android:layout_marginBottom="10dp"
+						android:layout_height="50dp">
+					</ImageView>
+
+					<ImageView
+						android:layout_width="match_parent"
+						android:id="@+id/iv_eyesBitmap3"
+						android:scaleType="centerInside"
+						android:layout_marginBottom="10dp"
+						android:layout_height="50dp">
+					</ImageView>
+
+					<ImageView
+						android:layout_width="match_parent"
+						android:id="@+id/iv_eyesBitmap4"
+						android:scaleType="centerInside"
+						android:layout_marginBottom="10dp"
+						android:layout_height="50dp">
+					</ImageView>
+
+					<ImageView
+						android:layout_width="match_parent"
+						android:id="@+id/iv_eyesBitmap5"
+						android:scaleType="centerInside"
+						android:layout_marginBottom="10dp"
+						android:layout_height="50dp">
+					</ImageView>
+
+					<ImageView
+						android:layout_width="match_parent"
+						android:id="@+id/iv_eyesBitmap6"
+						android:scaleType="centerInside"
+						android:layout_marginBottom="10dp"
+						android:layout_height="50dp">
+					</ImageView>
+
+					<ImageView
+						android:layout_width="match_parent"
+						android:id="@+id/iv_eyesBitmap7"
+						android:scaleType="centerInside"
+						android:layout_marginBottom="10dp"
+						android:layout_height="50dp">
+					</ImageView>
+
+					<ImageView
+						android:layout_width="match_parent"
+						android:id="@+id/iv_eyesBitmap8"
+						android:scaleType="centerInside"
+						android:layout_marginBottom="10dp"
+						android:layout_height="50dp">
+					</ImageView>
+
+					<Button
+						android:layout_width="wrap_content"
+						android:id="@+id/bt_clearEyes"
+						android:text="清除眼部"
+						android:layout_height="wrap_content">
+					</Button>
 
 					<TextView
 						android:layout_width="wrap_content"
@@ -186,11 +249,49 @@
 
 					<ImageView
 						android:layout_width="match_parent"
-						android:background="#ff00ff"
-
-						android:layout_height="150dp">
-
+						android:id="@+id/iv_cheekBitmap1"
+						android:scaleType="centerInside"
+						android:layout_marginBottom="15dp"
+						android:layout_height="30dp">
 					</ImageView>
+
+					<ImageView
+						android:layout_width="match_parent"
+						android:id="@+id/iv_cheekBitmap2"
+						android:scaleType="centerInside"
+						android:layout_marginBottom="15dp"
+						android:layout_height="30dp">
+					</ImageView>
+
+					<ImageView
+						android:layout_width="match_parent"
+						android:id="@+id/iv_cheekBitmap3"
+						android:scaleType="centerInside"
+						android:layout_marginBottom="15dp"
+						android:layout_height="30dp">
+					</ImageView>
+
+					<ImageView
+						android:layout_width="match_parent"
+						android:id="@+id/iv_cheekBitmap4"
+						android:scaleType="centerInside"
+						android:layout_marginBottom="15dp"
+						android:layout_height="30dp">
+					</ImageView>
+
+					<ImageView
+						android:layout_width="match_parent"
+						android:id="@+id/iv_cheekBitmap5"
+						android:scaleType="centerInside"
+						android:layout_height="30dp">
+					</ImageView>
+
+					<Button
+						android:layout_width="wrap_content"
+						android:id="@+id/bt_clearCheek"
+						android:text="清除腮部"
+						android:layout_height="wrap_content">
+					</Button>
 
 					<TextView
 						android:layout_width="wrap_content"
@@ -202,11 +303,115 @@
 
 					<ImageView
 						android:layout_width="match_parent"
-						android:background="#ff00ff"
-
-						android:layout_height="150dp">
-
+						android:id="@+id/iv_mouthBitmap1"
+						android:scaleType="centerInside"
+						android:layout_marginBottom="10dp"
+						android:layout_height="50dp">
 					</ImageView>
+
+					<ImageView
+						android:layout_width="match_parent"
+						android:id="@+id/iv_mouthBitmap2"
+						android:scaleType="centerInside"
+						android:layout_marginBottom="10dp"
+						android:layout_height="50dp">
+					</ImageView>
+
+					<ImageView
+						android:layout_width="match_parent"
+						android:id="@+id/iv_mouthBitmap3"
+						android:scaleType="centerInside"
+						android:layout_marginBottom="10dp"
+						android:layout_height="50dp">
+					</ImageView>
+
+					<ImageView
+						android:layout_width="match_parent"
+						android:id="@+id/iv_mouthBitmap4"
+						android:scaleType="centerInside"
+						android:layout_marginBottom="10dp"
+						android:layout_height="50dp">
+					</ImageView>
+
+
+					<ImageView
+						android:layout_width="match_parent"
+						android:id="@+id/iv_mouthBitmap5"
+						android:scaleType="centerInside"
+						android:layout_marginBottom="10dp"
+						android:layout_height="50dp">
+					</ImageView>
+
+					<ImageView
+						android:layout_width="match_parent"
+						android:id="@+id/iv_mouthBitmap6"
+						android:scaleType="centerInside"
+						android:layout_marginBottom="10dp"
+						android:layout_height="50dp">
+					</ImageView>
+
+					<ImageView
+						android:layout_width="match_parent"
+						android:id="@+id/iv_mouthBitmap7"
+						android:scaleType="centerInside"
+						android:layout_marginBottom="10dp"
+						android:layout_height="50dp">
+					</ImageView>
+
+					<ImageView
+						android:layout_width="match_parent"
+						android:id="@+id/iv_mouthBitmap8"
+						android:scaleType="centerInside"
+						android:layout_marginBottom="10dp"
+						android:layout_height="50dp">
+					</ImageView>
+
+					<ImageView
+						android:layout_width="match_parent"
+						android:id="@+id/iv_mouthBitmap9"
+						android:scaleType="centerInside"
+						android:layout_marginBottom="10dp"
+						android:layout_height="50dp">
+					</ImageView>
+
+					<ImageView
+						android:layout_width="match_parent"
+						android:id="@+id/iv_mouthBitmap10"
+						android:scaleType="centerInside"
+						android:layout_marginBottom="10dp"
+						android:layout_height="50dp">
+					</ImageView>
+
+					<ImageView
+						android:layout_width="match_parent"
+						android:id="@+id/iv_mouthBitmap11"
+						android:scaleType="centerInside"
+						android:layout_marginBottom="10dp"
+						android:layout_height="50dp">
+					</ImageView>
+
+					<ImageView
+						android:layout_width="match_parent"
+						android:id="@+id/iv_mouthBitmap12"
+						android:scaleType="centerInside"
+						android:layout_marginBottom="10dp"
+						android:layout_height="50dp">
+					</ImageView>
+
+					<ImageView
+						android:layout_width="match_parent"
+						android:id="@+id/iv_mouthBitmap13"
+						android:scaleType="centerInside"
+						android:layout_marginBottom="10dp"
+						android:layout_height="50dp">
+					</ImageView>
+
+					<Button
+						android:layout_width="wrap_content"
+						android:id="@+id/bt_clearMouth"
+						android:text="清除嘴部"
+						android:layout_height="wrap_content">
+					</Button>
 
 				</LinearLayout>
 
