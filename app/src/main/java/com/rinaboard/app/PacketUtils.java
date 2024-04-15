@@ -5,6 +5,9 @@ import androidx.annotation.NonNull;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.LinkedList;
+
+import static com.rinaboard.app.StartAnimeView.CELLS;
 
 public class PacketUtils {
     //—————————————————————————————— 指令定义 ————————————————————————————————————————
@@ -51,6 +54,14 @@ public class PacketUtils {
     private static final byte VideoMode = (byte) 0x01;
     private static final byte RecognitionMode = (byte) 0x02;
 
+    //启动动画
+    private static final byte ClearStart = (byte) 0x21;
+    private static final byte AppendBitmap = (byte) 0x22;
+    private static final byte AppendBitmapOnBoard = (byte) 0x23;
+    private static final byte AppendMicroSecond = (byte) 0x24;
+    private static final byte AppendSecond = (byte) 0x25;
+
+
     //—————————————————————————————— 指令定义结束 ————————————————————————————————————————
 
     //——————————————————————————————————————————— 命令发送 ——————————————————————————————————————————
@@ -93,6 +104,74 @@ public class PacketUtils {
 
     public static void LastExpression(@NonNull UDPInteraction udp) {
         byte[] data = recombinePackage(CmdType.Set, DataName.LASTEXPRESSION);
+        udp.send(data);
+    }
+
+    public static void SetStartBitmap(@NonNull UDPInteraction udp, LinkedList<StartAnime> startAnimeLinkedList){
+        ClearStartBitmap(udp);
+
+        byte count = 0;
+
+        for(StartAnime element : startAnimeLinkedList){
+            if (count >= StartAnimeView.CELLS) {
+                break;
+            }
+            if (element == null) {
+                continue;
+            }
+
+            if (element instanceof Expression) {
+                Expression expression = (Expression) element;
+                AppendStartBitmap(udp, expression.getBitmap());
+            } else if (element instanceof ExpressionOnBoard) {
+                ExpressionOnBoard expression = (ExpressionOnBoard) element;
+                AppendStartBitmapOnBoard(udp, expression.getText());
+            } else if (element instanceof DelayMicroSeconds) {
+                DelayMicroSeconds delayMicroSeconds = (DelayMicroSeconds) element;
+                AppendMicroSecond(udp, delayMicroSeconds.getMs());
+            } else if (element instanceof DelaySeconds) {
+                DelaySeconds delaySeconds = (DelaySeconds) element;
+                AppendSecond(udp, delaySeconds.getSeconds());
+            }
+            try{
+                Thread.sleep(15);
+            }catch (InterruptedException e){
+                Thread.currentThread().interrupt();
+            }
+            count++;
+        }
+    }
+
+    private static void ClearStartBitmap(@NonNull UDPInteraction udp) {
+        byte[] data = recombinePackage(CmdType.Set, DataName.CLEARSTART);
+        udp.send(data);
+    }
+
+    private static void AppendStartBitmap(@NonNull UDPInteraction udp, @NonNull byte[] bitmap) {
+        byte[] data = recombinePackage(CmdType.Set, DataName.APPENDBITMAP, bitmap, (byte) 48);
+        udp.send(data);
+    }
+
+    private static void AppendStartBitmapOnBoard(@NonNull UDPInteraction udp, @NonNull String bitmapName) {
+        byte[] data = recombinePackage(
+                CmdType.Set,
+                DataName.APPENDBITMAPONBOARD,
+                bitmapName.getBytes(StandardCharsets.UTF_8),
+                (byte) bitmapName.getBytes(StandardCharsets.UTF_8).length);
+        udp.send(data);
+    }
+
+    private static void AppendMicroSecond(@NonNull UDPInteraction udp, short ms) {
+        byte[] bytes = new byte[2];
+        bytes[0] = (byte) ((ms >> 8) & 0xFF);
+        bytes[1] = (byte) (ms & 0xFF);
+        byte[] data = recombinePackage(CmdType.Set, DataName.APPENDMICROSECOND, bytes, (byte) 2);
+        udp.send(data);
+    }
+
+    private static void AppendSecond(@NonNull UDPInteraction udp, byte s) {
+        byte[] bytes = {s};
+        byte[] data = recombinePackage(CmdType.Set, DataName.APPENDSECOND, bytes, (byte) 1);
         udp.send(data);
     }
 
@@ -199,7 +278,7 @@ public class PacketUtils {
     }
 
     public static RinaBoardApp.SystemState GetSystemState(@NonNull UDPInteraction udp) {
-        udp.send(getSystemState());
+        udp.send(getSystemStateFromBoard());
         byte[] state = udp.receive();
         if (state.length != 1) {
             System.out.println("Byte array length must be 1");
@@ -269,7 +348,7 @@ public class PacketUtils {
         return recombinePackage(CmdType.Set, DataName.WIFIPASSWORD, password.getBytes(StandardCharsets.UTF_8), (byte) password.getBytes(StandardCharsets.UTF_8).length);
     }
 
-    public static byte[] setSystemState(RinaBoardApp.SystemState state) {
+    public static byte[] setSystemStateToBoard(RinaBoardApp.SystemState state) {
         byte[] data = new byte[1];
         switch (state) {
             case ExpressionMode:
@@ -327,7 +406,7 @@ public class PacketUtils {
         return recombinePackage(CmdType.Get, DataName.WIFISSID);
     }
 
-    public static byte[] getSystemState() {
+    public static byte[] getSystemStateFromBoard() {
         return recombinePackage(CmdType.Get, DataName.SYSTEMSTATE);
     }
 
@@ -405,6 +484,22 @@ public class PacketUtils {
                 break;
             case SYSTEMSTATE:
                 combinedPackage[0] |= SystemState;
+                break;
+            case CLEARSTART:
+                combinedPackage[0] |= ClearStart;
+                break;
+            case APPENDBITMAP:
+                combinedPackage[0] |= AppendBitmap;
+                break;
+            case APPENDBITMAPONBOARD:
+                combinedPackage[0] |= AppendBitmapOnBoard;
+                break;
+            case APPENDMICROSECOND:
+                combinedPackage[0] |= AppendMicroSecond;
+                break;
+            case APPENDSECOND:
+                combinedPackage[0] |= AppendSecond;
+                break;
         }
 
         combinedPackage[1] = dataSize;//第二字节表示数据包长度
@@ -488,6 +583,22 @@ public class PacketUtils {
                 break;
             case SYSTEMSTATE:
                 combinedPackage[0] |= SystemState;
+                break;
+            case CLEARSTART:
+                combinedPackage[0] |= ClearStart;
+                break;
+            case APPENDBITMAP:
+                combinedPackage[0] |= AppendBitmap;
+                break;
+            case APPENDBITMAPONBOARD:
+                combinedPackage[0] |= AppendBitmapOnBoard;
+                break;
+            case APPENDMICROSECOND:
+                combinedPackage[0] |= AppendMicroSecond;
+                break;
+            case APPENDSECOND:
+                combinedPackage[0] |= AppendSecond;
+                break;
         }
 
         combinedPackage[1] = 0x00;//GET命令的数据包长度为0
@@ -521,7 +632,13 @@ enum DataName {
 
     REBOOT,
 
-    SYSTEMSTATE;
+    SYSTEMSTATE,
+
+    CLEARSTART,
+    APPENDBITMAP,
+    APPENDBITMAPONBOARD,
+    APPENDMICROSECOND,
+    APPENDSECOND
 }
 
 enum CmdType {

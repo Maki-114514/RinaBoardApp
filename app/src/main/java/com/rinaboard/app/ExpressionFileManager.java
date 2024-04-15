@@ -19,7 +19,7 @@ public class ExpressionFileManager {
         } catch (FileNotFoundException e) {
             // 如果文件不存在，则创建一个新的 expression.json 文件，并写入基本的json格式
             try {
-                FileOutputStream fos = context.openFileOutput("expression.json", Context.MODE_PRIVATE);
+                FileOutputStream fos = context.openFileOutput(FILENAME, Context.MODE_PRIVATE);
                 fos.write("{}".getBytes());
                 fos.close();
             } catch (IOException ex) {

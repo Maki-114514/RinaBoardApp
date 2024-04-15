@@ -53,6 +53,37 @@
 				android:orientation="vertical"
 				android:gravity="center">
 
+				<Button
+					android:layout_width="wrap_content"
+					android:id="@+id/bt_appendExpression"
+					android:text="添加表情"
+					android:layout_marginBottom="5dp"
+					android:layout_height="wrap_content">
+				</Button>
+
+				<Button
+					android:layout_width="wrap_content"
+					android:id="@+id/bt_appendMicroSecond"
+					android:text="延时毫秒"
+					android:layout_marginBottom="5dp"
+					android:layout_height="wrap_content">
+				</Button>
+
+				<Button
+					android:layout_width="wrap_content"
+					android:id="@+id/bt_appendSecond"
+					android:text="延时秒"
+					android:layout_marginBottom="5dp"
+					android:layout_height="wrap_content">
+				</Button>
+
+				<Button
+					android:layout_width="wrap_content"
+					android:id="@+id/bt_delete"
+					android:text="删除"
+					android:layout_marginBottom="20dp"
+					android:layout_height="wrap_content">
+				</Button>
 			</LinearLayout>
 		</LinearLayout>
 
@@ -62,7 +93,15 @@
 			android:layout_height="match_parent"
 			android:orientation="vertical">
 
-
+			<com.rinaboard.app.StartAnimeView
+				android:layout_width="match_parent"
+				android:id="@+id/startAnimeView"
+				android:layout_marginStart="10dp"
+				android:layout_marginEnd="10dp"
+				android:layout_marginTop="25dp"
+				android:layout_marginBottom="15dp"
+				android:layout_height="match_parent">
+			</com.rinaboard.app.StartAnimeView>
 		</LinearLayout>
 
 		<LinearLayout
@@ -93,6 +132,37 @@
 					android:src="@drawable/setting"
 					android:id="@+id/bt_setting">
 				</ImageView>
+			</LinearLayout>
+
+			<LinearLayout
+				android:layout_width="match_parent"
+				android:layout_height="match_parent"
+				android:orientation="vertical"
+				android:gravity="center">
+
+				<Button
+					android:layout_width="wrap_content"
+					android:id="@+id/bt_existList"
+					android:text="已有序列"
+					android:layout_marginBottom="20dp"
+					android:layout_height="wrap_content">
+				</Button>
+
+				<Button
+					android:layout_width="wrap_content"
+					android:id="@+id/bt_saveList"
+					android:text="保存"
+					android:layout_marginBottom="20dp"
+					android:layout_height="wrap_content">
+				</Button>
+
+				<Button
+					android:layout_width="wrap_content"
+					android:id="@+id/bt_updateList"
+					android:enabled="false"
+					android:text="上传"
+					android:layout_height="wrap_content">
+				</Button>
 			</LinearLayout>
 		</LinearLayout>
 

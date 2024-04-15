@@ -218,7 +218,7 @@ public class MainActivity extends AppCompatActivity {
                     new Thread(new Runnable() {
                         @Override
                         public void run() {
-                            udp1.send(setSystemState(app.getMode()));
+                            udp1.send(setSystemStateToBoard(app.getMode()));
                         }
                     }).start();
                 }
@@ -235,7 +235,7 @@ public class MainActivity extends AppCompatActivity {
                     new Thread(new Runnable() {
                         @Override
                         public void run() {
-                            udp1.send(setSystemState(app.getMode()));
+                            udp1.send(setSystemStateToBoard(app.getMode()));
                         }
                     }).start();
                 }
@@ -252,7 +252,7 @@ public class MainActivity extends AppCompatActivity {
                     new Thread(new Runnable() {
                         @Override
                         public void run() {
-                            udp1.send(setSystemState(app.getMode()));
+                            udp1.send(setSystemStateToBoard(app.getMode()));
                         }
                     }).start();
                 }

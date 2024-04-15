@@ -4,6 +4,7 @@ import android.app.Application;
 import android.graphics.Color;
 
 import java.net.*;
+import java.util.LinkedList;
 
 import static com.rinaboard.app.PacketUtils.*;
 import static com.rinaboard.app.PacketUtils.GetLightBrightness;
@@ -29,6 +30,7 @@ public class RinaBoardApp extends Application {
     private final int rowBytes = (COLS + 7) / 8;
     private byte[] editBitmap = new byte[ROWS * rowBytes];
     private float batteryVoltage = 0.0f;
+    private LinkedList<StartAnime> startAnimeLinkedList = new LinkedList<>();
 
     @Override
     public void onCreate() {
@@ -39,6 +41,7 @@ public class RinaBoardApp extends Application {
         startConnectCheck();
         //创建expression.json文件用于存储表情的键值对
         ExpressionFileManager.createExpressionJsonFile(getApplicationContext());
+        StartAnimeFileManager.createStartAnimeJsonFile(getApplicationContext());
     }
 
     public static RinaBoardApp getInstance() {
@@ -218,6 +221,14 @@ public class RinaBoardApp extends Application {
 
     public void setBatteryVoltage(float batteryVoltage) {
         this.batteryVoltage = batteryVoltage;
+    }
+
+    public void setStartAnimeLinkedList(LinkedList<StartAnime> startAnimeLinkedList) {
+        this.startAnimeLinkedList = startAnimeLinkedList;
+    }
+
+    public LinkedList<StartAnime> getStartAnimeLinkedList() {
+        return startAnimeLinkedList;
     }
 
     public enum SystemState {
