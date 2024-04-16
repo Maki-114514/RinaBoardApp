@@ -27,9 +27,10 @@ public class MainActivity extends AppCompatActivity {
     private ImageView iv_batteryDisplay;
     private TextView tv_batteryVoltage;
     private ImageView bt_setting;
-    private Switch sw_expMod;
-    private Switch sw_videoMod;
-    private Switch sw_recognitionMod;
+    private Switch sw_expMode;
+    private Switch sw_videoMode;
+    private Switch sw_recognitionMode;
+    private Switch sw_damageMode;
     private Button bt_lastExp;
     private Button bt_nextExp;
     private Button bt_selectColor;
@@ -76,6 +77,10 @@ public class MainActivity extends AppCompatActivity {
 
                             app.setBatteryVoltage(connectThread1.getVoltage());
 
+                            //光害相关设置
+                            app.setDamageLightState(GetDamageLightState(udp1));
+                            app.setDamageWords(GetDamageWords(udp1));
+
                             runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
@@ -100,6 +105,10 @@ public class MainActivity extends AppCompatActivity {
                         app.setLightBrightness(127);
 
                         app.setBatteryVoltage(0.0f);
+
+                        //光害相关设置
+                        app.setDamageLightState(false);
+                        app.setDamageWords("");
 
                         runOnUiThread(new Runnable() {
                             @Override
@@ -166,6 +175,10 @@ public class MainActivity extends AppCompatActivity {
                         startActivity(new Intent(MainActivity.this, SecondVideoActivity.class));
                         overridePendingTransition(0, 0);
                         break;
+                    case DamageMode:
+                        startActivity(new Intent(MainActivity.this, SecondDamageActivity.class));
+                        overridePendingTransition(0, 0);
+                        break;
                     case RecognitionMode:
                         break;
                 }
@@ -204,16 +217,19 @@ public class MainActivity extends AppCompatActivity {
         tv_deviceType = findViewById(R.id.tv_deviceType);
 
         //模式切换
-        sw_expMod = findViewById(R.id.sw_expMod);
-        sw_videoMod = findViewById(R.id.sw_videoMod);
-        sw_recognitionMod = findViewById(R.id.sw_recognitionMod);
+        sw_expMode = findViewById(R.id.sw_expMode);
+        sw_videoMode = findViewById(R.id.sw_videoMode);
+        sw_recognitionMode = findViewById(R.id.sw_recognitionMode);
+        sw_damageMode = findViewById(R.id.sw_damageMode);
+
         //表情模式
-        sw_expMod.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+        sw_expMode.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked) {
-                    sw_videoMod.setChecked(false);
-                    sw_recognitionMod.setChecked(false);
+                    sw_videoMode.setChecked(false);
+                    sw_recognitionMode.setChecked(false);
+                    sw_damageMode.setChecked(false);
                     app.setMode(ExpressionMode);
                     new Thread(new Runnable() {
                         @Override
@@ -225,12 +241,13 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         //视频模式
-        sw_videoMod.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+        sw_videoMode.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked) {
-                    sw_expMod.setChecked(false);
-                    sw_recognitionMod.setChecked(false);
+                    sw_expMode.setChecked(false);
+                    sw_recognitionMode.setChecked(false);
+                    sw_damageMode.setChecked(false);
                     app.setMode(VideoMode);
                     new Thread(new Runnable() {
                         @Override
@@ -242,13 +259,31 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         //同步模式
-        sw_recognitionMod.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+        sw_recognitionMode.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked) {
-                    sw_videoMod.setChecked(false);
-                    sw_expMod.setChecked(false);
+                    sw_videoMode.setChecked(false);
+                    sw_expMode.setChecked(false);
+                    sw_damageMode.setChecked(false);
                     app.setMode(RecognitionMode);
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            udp1.send(setSystemStateToBoard(app.getMode()));
+                        }
+                    }).start();
+                }
+            }
+        });
+        sw_damageMode.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if(isChecked){
+                    sw_videoMode.setChecked(false);
+                    sw_expMode.setChecked(false);
+                    sw_recognitionMode.setChecked(false);
+                    app.setMode(DamageMode);
                     new Thread(new Runnable() {
                         @Override
                         public void run() {
@@ -427,19 +462,28 @@ public class MainActivity extends AppCompatActivity {
 
         switch (mode) {
             case ExpressionMode:
-                sw_expMod.setChecked(true);
-                sw_videoMod.setChecked(false);
-                sw_recognitionMod.setChecked(false);
+                sw_expMode.setChecked(true);
+                sw_videoMode.setChecked(false);
+                sw_recognitionMode.setChecked(false);
+                sw_damageMode.setChecked(false);
                 break;
             case VideoMode:
-                sw_expMod.setChecked(false);
-                sw_videoMod.setChecked(true);
-                sw_recognitionMod.setChecked(false);
+                sw_expMode.setChecked(false);
+                sw_videoMode.setChecked(true);
+                sw_recognitionMode.setChecked(false);
+                sw_damageMode.setChecked(false);
                 break;
             case RecognitionMode:
-                sw_expMod.setChecked(false);
-                sw_videoMod.setChecked(false);
-                sw_recognitionMod.setChecked(true);
+                sw_expMode.setChecked(false);
+                sw_videoMode.setChecked(false);
+                sw_recognitionMode.setChecked(true);
+                sw_damageMode.setChecked(false);
+                break;
+            case DamageMode:
+                sw_expMode.setChecked(false);
+                sw_videoMode.setChecked(false);
+                sw_recognitionMode.setChecked(false);
+                sw_damageMode.setChecked(true);
                 break;
         }
 
@@ -462,13 +506,14 @@ public class MainActivity extends AppCompatActivity {
     private void enableWidget() {
         RinaBoardApp app = (RinaBoardApp) getApplication();
 
-        sw_expMod.setEnabled(true);
-        sw_videoMod.setEnabled(true);
+        sw_expMode.setEnabled(true);
+        sw_videoMode.setEnabled(true);
         if (app.getDeviceType().equals("V1")) {
-            sw_recognitionMod.setEnabled(false);
+            sw_recognitionMode.setEnabled(false);
         } else if (app.getDeviceType().equals("V2") | app.getDeviceType().equals("V1.5")) {
-            sw_recognitionMod.setEnabled(true);
+            sw_recognitionMode.setEnabled(true);
         }
+        sw_damageMode.setEnabled(true);
         bt_lastExp.setEnabled(true);
         bt_nextExp.setEnabled(true);
         bt_selectColor.setEnabled(true);
@@ -479,9 +524,10 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void disableWidget() {
-        sw_expMod.setEnabled(false);
-        sw_videoMod.setEnabled(false);
-        sw_recognitionMod.setEnabled(false);
+        sw_expMode.setEnabled(false);
+        sw_videoMode.setEnabled(false);
+        sw_recognitionMode.setEnabled(false);
+        sw_damageMode.setEnabled(false);
         bt_lastExp.setEnabled(false);
         bt_nextExp.setEnabled(false);
         bt_selectColor.setEnabled(false);

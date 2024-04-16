@@ -13,7 +13,7 @@ import static com.rinaboard.app.ConnectState.*;
 public class ConnectThread extends Thread {
     private static final String SERVER_IP = "192.168.4.22";
     private static final int SERVER_PORT = 14514;
-    private static final int TIMEOUT = 2500; // 超时时间为 2.5 秒
+    private static final int TIMEOUT = 3000; // 超时时间为 3000 秒
     private static final byte[] DATA_TO_ASK = {ASK};
     private static final byte[] DATA_TO_ELECTRICITY = {Electricity};
 

@@ -73,6 +73,10 @@ public class ThirdActivity extends AppCompatActivity {
 
                             app.setBatteryVoltage(connectThread1.getVoltage());
 
+                            //光害相关设置
+                            app.setDamageLightState(GetDamageLightState(udp1));
+                            app.setDamageWords(GetDamageWords(udp1));
+
                             runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
@@ -98,6 +102,10 @@ public class ThirdActivity extends AppCompatActivity {
                         app.setLightBrightness(100);
 
                         app.setBatteryVoltage(0.0f);
+
+                        //光害相关设置
+                        app.setDamageLightState(false);
+                        app.setDamageWords("");
 
                         runOnUiThread(new Runnable() {
                             @Override
@@ -165,6 +173,9 @@ public class ThirdActivity extends AppCompatActivity {
                         startActivity(new Intent(ThirdActivity.this, SecondVideoActivity.class));
                         overridePendingTransition(0, 0);
                         break;
+                    case DamageMode:
+                        startActivity(new Intent(ThirdActivity.this, SecondDamageActivity.class));
+                        overridePendingTransition(0, 0);
                     case RecognitionMode:
                         break;
                 }

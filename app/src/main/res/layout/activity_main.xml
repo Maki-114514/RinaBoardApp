@@ -130,8 +130,8 @@
 			<!--模式选择-->
 			<Switch
 				android:layout_width="wrap_content"
-				android:text="表情模式"
-				android:id="@+id/sw_expMod"
+				android:text="表情"
+				android:id="@+id/sw_expMode"
 				android:enabled="false"
 				android:checked="true"
 				android:layout_marginHorizontal="5dp"
@@ -141,8 +141,8 @@
 
 			<Switch
 				android:layout_width="wrap_content"
-				android:text="视频模式"
-				android:id="@+id/sw_videoMod"
+				android:text="视频"
+				android:id="@+id/sw_videoMode"
 				android:enabled="false"
 				android:layout_marginHorizontal="5dp"
 				android:layout_height="wrap_content"
@@ -151,14 +151,23 @@
 
 			<Switch
 				android:layout_width="wrap_content"
-				android:text="同步模式"
-				android:id="@+id/sw_recognitionMod"
+				android:text="光害"
+				android:id="@+id/sw_damageMode"
 				android:enabled="false"
 				android:layout_marginHorizontal="5dp"
 				android:layout_height="wrap_content"
 				tools:ignore="UseSwitchCompatOrMaterialXml">
 			</Switch>
 
+			<Switch
+				android:layout_width="wrap_content"
+				android:text="识别"
+				android:id="@+id/sw_recognitionMode"
+				android:enabled="false"
+				android:layout_marginHorizontal="5dp"
+				android:layout_height="wrap_content"
+				tools:ignore="UseSwitchCompatOrMaterialXml">
+			</Switch>
 
 		</LinearLayout>
 

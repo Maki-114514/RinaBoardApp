@@ -26,6 +26,8 @@ public class RinaBoardApp extends Application {
     private int boardBrightness = 75;
     private boolean lightState = true;
     private int lightBrightness = 127;
+    private boolean damageLightState = false;
+    private String damageWords = "";
     private SystemState mode = ExpressionMode;
     private final int rowBytes = (COLS + 7) / 8;
     private byte[] editBitmap = new byte[ROWS * rowBytes];
@@ -231,10 +233,27 @@ public class RinaBoardApp extends Application {
         return startAnimeLinkedList;
     }
 
+    public String getDamageWords() {
+        return damageWords;
+    }
+
+    public void setDamageWords(String damageWords) {
+        this.damageWords = damageWords;
+    }
+
+    public boolean getDamageLightState() {
+        return damageLightState;
+    }
+
+    public void setDamageLightState(boolean damageLightState) {
+        this.damageLightState = damageLightState;
+    }
+
     public enum SystemState {
         ExpressionMode,
         VideoMode,
-        RecognitionMode;
+        RecognitionMode,
+        DamageMode
     }
 }
 

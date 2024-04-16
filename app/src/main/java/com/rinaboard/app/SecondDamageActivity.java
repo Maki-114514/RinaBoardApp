@@ -1,36 +1,35 @@
 package com.rinaboard.app;
 
-
 import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
+import android.text.*;
 import android.view.View;
 import android.widget.*;
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 
 import static com.rinaboard.app.PacketUtils.*;
+import static com.rinaboard.app.PacketUtils.GetDamageWords;
 import static com.rinaboard.app.RinaBoardApp.SystemState.ExpressionMode;
 
-public class SettingActivity extends AppCompatActivity {
-
+public class SecondDamageActivity extends AppCompatActivity {
     private ImageButton bt_mainPage;
-    private ImageButton bt_secondPage;
     private ImageButton bt_thirdPage;
+    private ImageView bt_setting;
     private ImageView iv_batteryDisplay;
-    private TextView tv_batteryVoltage;
-    private EditText et_deviceName;
-    private EditText et_wifiSSID;
-    private EditText et_wifiPassword;
-    private Button bt_saveReboot;
-    UDPInteraction udp1;
-    ConnectThread connectThread1;
-
+    private Switch sw_damageLightState;
+    private Button bt_updateWords;
+    private EditText et_editWords;
+    private UDPInteraction udp1;
+    private ConnectThread connectThread1;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_setting);
-        RinaBoardApp app = (RinaBoardApp) getApplication();
+        setContentView(R.layout.activity_second_damage);
 
+        RinaBoardApp app = (RinaBoardApp) getApplication();
         //获取udp线程
         udp1 = app.getUdp1();
         //获取连接状态检测
@@ -42,11 +41,7 @@ public class SettingActivity extends AppCompatActivity {
                     case CONNECTED://如果连接上了，那么就去向璃奈版发出请求并获得数据
                         System.out.println("Connect success");
                         System.out.println();
-//                        try {
-//                            Thread.sleep(500);
-//                        } catch (Exception e) {
-//                            e.printStackTrace();
-//                        }
+
                         if(udp1 != null){
                             //获取系统信息
                             app.setDeviceName(GetDeviceName(udp1));
@@ -71,12 +66,7 @@ public class SettingActivity extends AppCompatActivity {
                             runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
-                                    bt_saveReboot.setEnabled(true);
-
                                     float voltage = app.getBatteryVoltage();
-                                    String formattedString = String.format("%.1f", voltage);
-                                    tv_batteryVoltage.setText(formattedString + "V");
-                                    tv_batteryVoltage.setText(formattedString + "V");
                                     if (voltage >= 3.9f) {
                                         iv_batteryDisplay.setImageResource(R.drawable.battery_4);
                                     } else if (voltage >= 3.79f) {
@@ -93,7 +83,6 @@ public class SettingActivity extends AppCompatActivity {
                         }
                         break;
                     case DISCONNECT:
-
                         //获取系统信息
                         app.setDeviceName("");
                         app.setDeviceType("");
@@ -102,11 +91,11 @@ public class SettingActivity extends AppCompatActivity {
 
                         //颜色设置
                         app.setCustomColor(android.graphics.Color.parseColor("#FF1493"));
-                        app.setBoardBrightness(100);
+                        app.setBoardBrightness(75);
 
                         //灯条设置
                         app.setLightState(true);
-                        app.setLightBrightness(100);
+                        app.setLightBrightness(127);
 
                         app.setBatteryVoltage(0.0f);
 
@@ -117,27 +106,17 @@ public class SettingActivity extends AppCompatActivity {
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                bt_saveReboot.setEnabled(false);
-
-                                float voltage = app.getBatteryVoltage();
-                                String formattedString = String.format("%.1f", voltage);
-                                tv_batteryVoltage.setText(formattedString + "V");
-                                tv_batteryVoltage.setText(formattedString + "V");
-                                if (voltage >= 3.9f) {
-                                    iv_batteryDisplay.setImageResource(R.drawable.battery_4);
-                                } else if (voltage >= 3.79f) {
-                                    iv_batteryDisplay.setImageResource(R.drawable.battery_3);
-                                } else if (voltage >= 3.65f) {
-                                    iv_batteryDisplay.setImageResource(R.drawable.battery_2);
-                                } else if (voltage >= 3.5f) {
-                                    iv_batteryDisplay.setImageResource(R.drawable.battery_1);
-                                }else {
-                                    iv_batteryDisplay.setImageResource(R.drawable.battery_0);
-                                }
-
-                                AlertDialog.Builder builder = new AlertDialog.Builder(SettingActivity.this);
+                                AlertDialog.Builder builder = new AlertDialog.Builder(SecondDamageActivity.this);
                                 builder.setTitle("警告");
                                 builder.setMessage("璃奈板连接丢失");
+                                builder.setOnDismissListener(new DialogInterface.OnDismissListener() {
+                                    @Override
+                                    public void onDismiss(DialogInterface dialog) {
+                                        // 对话框关闭时启动 MainActivity
+                                        startActivity(new Intent(SecondDamageActivity.this, MainActivity.class));
+                                        overridePendingTransition(0, 0);
+                                    }
+                                });
                                 AlertDialog alertDialog = builder.create();
                                 alertDialog.show();
                             }
@@ -154,8 +133,6 @@ public class SettingActivity extends AppCompatActivity {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        String formattedString = String.format("%.1f", voltage);
-                        tv_batteryVoltage.setText(formattedString + "V");
                         if (voltage >= 3.9f) {
                             iv_batteryDisplay.setImageResource(R.drawable.battery_4);
                         } else if (voltage >= 3.79f) {
@@ -172,63 +149,46 @@ public class SettingActivity extends AppCompatActivity {
             }
         });
 
-        //UI的init需要放在最后，否则在建立需要用到udp通讯的监听时，会出现udp1 = null而报错重启程序的情况
         initView();
+        updateView();
     }
-
-    private void initView() {
+    private void initView(){
         RinaBoardApp app = (RinaBoardApp) getApplication();
-
-        bt_mainPage = findViewById(R.id.bt_mainPage);
 
         bt_mainPage = findViewById(R.id.bt_mainPage);
         bt_mainPage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(SettingActivity.this, MainActivity.class));
+                System.out.println("MainPage Button is clicked!");
+                startActivity(new Intent(SecondDamageActivity.this, MainActivity.class));
                 overridePendingTransition(0, 0);
             }
         });
 
-        //第二页（绘图或者视频播放页面）
-        bt_secondPage = findViewById(R.id.bt_secondPage);
-        bt_secondPage.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                switch (app.getMode()) {
-                    case ExpressionMode:
-                        startActivity(new Intent(SettingActivity.this, SecondActivity.class));
-                        overridePendingTransition(0, 0);
-                        break;
-                    case VideoMode:
-                        startActivity(new Intent(SettingActivity.this, SecondVideoActivity.class));
-                        overridePendingTransition(0, 0);
-                        break;
-                    case DamageMode:
-                        startActivity(new Intent(SettingActivity.this, SecondDamageActivity.class));
-                        overridePendingTransition(0, 0);
-                    case RecognitionMode:
-                        break;
-                }
-            }
-        });
-
-        //开机动画设置页面
+        //第三页按钮
         bt_thirdPage = findViewById(R.id.bt_thirdPage);
         bt_thirdPage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(SettingActivity.this, ThirdActivity.class));
+                System.out.println("thirdPage Button is clicked!");
+                startActivity(new Intent(SecondDamageActivity.this, ThirdActivity.class));
                 overridePendingTransition(0, 0);
             }
         });
 
+        //设置页面
+        bt_setting = findViewById(R.id.bt_setting);
+        bt_setting.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(SecondDamageActivity.this, SettingActivity.class));
+                overridePendingTransition(0, 0);
+            }
+        });
+
+        //电量显示图标
         iv_batteryDisplay = findViewById(R.id.iv_batteryDisplay);
-        tv_batteryVoltage = findViewById(R.id.tv_batteryVoltage);
         float voltage = app.getBatteryVoltage();
-        String formattedString = String.format("%.1f", voltage);
-        tv_batteryVoltage.setText(formattedString + "V");
-        tv_batteryVoltage.setText(formattedString + "V");
         if (voltage >= 3.9f) {
             iv_batteryDisplay.setImageResource(R.drawable.battery_4);
         } else if (voltage >= 3.79f) {
@@ -241,32 +201,52 @@ public class SettingActivity extends AppCompatActivity {
             iv_batteryDisplay.setImageResource(R.drawable.battery_0);
         }
 
-        et_deviceName = findViewById(R.id.et_deviceName);
-        et_wifiSSID = findViewById(R.id.et_wifiSSID);
-        et_wifiPassword = findViewById(R.id.et_wifiPassword);
-
-        bt_saveReboot = findViewById(R.id.bt_saveReboot);
-        bt_saveReboot.setEnabled(connectThread1.getConnectState() != ConnectState.DISCONNECT);
-
-        bt_saveReboot.setOnClickListener(new View.OnClickListener() {
+        sw_damageLightState = findViewById(R.id.sw_damageLightState);
+        sw_damageLightState.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
-            public void onClick(View v) {
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                app.setDamageLightState(isChecked);
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
-                        if(!et_deviceName.getText().toString().isEmpty()){
-                            udp1.send(setDeviceNameToBoard(et_deviceName.getText().toString()));
+                        if(isChecked){
+                            app.setDamageLightState(true);
+                            udp1.send(setDamageLightStateToBoard(true));
+                        }else {
+                            app.setDamageLightState(false);
+                            udp1.send(setDamageLightStateToBoard(false));
                         }
-                        if(!et_wifiSSID.getText().toString().isEmpty()){
-                            udp1.send(setWifiSSIDToBoard(et_wifiSSID.getText().toString()));
-                        }
-                        if(!et_wifiPassword.getText().toString().isEmpty()){
-                            udp1.send(setWifiPasswordToBoard(et_wifiPassword.getText().toString()));
-                        }
-                        ReBootBoard(udp1);
                     }
                 }).start();
             }
         });
+
+        et_editWords = findViewById(R.id.et_editWords);
+        // 创建一个InputFilter
+        // 设置输入类型为英文
+        et_editWords.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_CAP_WORDS);
+
+
+        bt_updateWords = findViewById(R.id.bt_updateWords);
+        bt_updateWords.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String words = et_editWords.getText().toString();
+                if(!words.isEmpty()){
+                    app.setDamageWords(words);
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            udp1.send(setDamageWordsToBoard(words));
+                        }
+                    }).start();
+                }
+            }
+        });
+    }
+    private void updateView(){
+        RinaBoardApp app = (RinaBoardApp) getApplication();
+
+        sw_damageLightState.setChecked(app.getDamageLightState());
     }
 }

@@ -35,7 +35,6 @@ import static com.rinaboard.app.RinaBoardApp.SystemState.ExpressionMode;
 
 public class SecondVideoActivity extends AppCompatActivity {
     private static final int REQUEST_PICK_VIDEO = 1;
-    private static final String TAG = "SecondVideoActivity";
     Size targetSize = new Size(18, 16);
     private ImageButton bt_mainPage;
     private ImageButton bt_thirdPage;
@@ -96,6 +95,10 @@ public class SecondVideoActivity extends AppCompatActivity {
 
                             app.setBatteryVoltage(connectThread1.getVoltage());
 
+                            //光害相关设置
+                            app.setDamageLightState(GetDamageLightState(udp1));
+                            app.setDamageWords(GetDamageWords(udp1));
+
                             runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
@@ -131,6 +134,10 @@ public class SecondVideoActivity extends AppCompatActivity {
                         app.setLightBrightness(127);
 
                         app.setBatteryVoltage(0.0f);
+
+                        //光害相关设置
+                        app.setDamageLightState(false);
+                        app.setDamageWords("");
 
                         runOnUiThread(new Runnable() {
                             @Override

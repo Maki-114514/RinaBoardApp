@@ -73,6 +73,10 @@ public class SecondActivity extends AppCompatActivity {
 
                             app.setBatteryVoltage(connectThread1.getVoltage());
 
+                            //光害相关设置
+                            app.setDamageLightState(GetDamageLightState(udp1));
+                            app.setDamageWords(GetDamageWords(udp1));
+
                             //重绘UI
                             runOnUiThread(new Runnable() {
                                 @Override
@@ -99,6 +103,10 @@ public class SecondActivity extends AppCompatActivity {
                         app.setLightBrightness(127);
 
                         app.setBatteryVoltage(0.0f);
+
+                        //光害相关设置
+                        app.setDamageLightState(false);
+                        app.setDamageWords("");
 
                         runOnUiThread(new Runnable() {
                             @Override

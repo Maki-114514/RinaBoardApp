@@ -53,6 +53,11 @@ public class PacketUtils {
     private static final byte ExpressionMode = (byte) 0x00;
     private static final byte VideoMode = (byte) 0x01;
     private static final byte RecognitionMode = (byte) 0x02;
+    private static final byte DamageMode = (byte) 0x03;
+
+    //光害相关
+    private static final byte DamageLightState = (byte) 0x26;
+    private static final byte DamageWords = (byte) 0x27;
 
     //启动动画
     private static final byte ClearStart = (byte) 0x21;
@@ -262,6 +267,21 @@ public class PacketUtils {
         return Float.intBitsToFloat(result);
     }
 
+    public static boolean GetDamageLightState(@NonNull UDPInteraction udp){
+        udp.send(getDamageLightStateFromBoard());
+        byte[] bytesData = udp.receive();
+        if(bytesData.length != 1){
+            System.err.println("Byte array length must be 1");
+            return false;
+        }
+        return bytesData[0] != 0;
+    }
+
+    public static String GetDamageWords(@NonNull UDPInteraction udp){
+        udp.send(getDamageWordsFromBoard());
+        return udp.receiveString();
+    }
+
     public static String GetDeviceName(@NonNull UDPInteraction udp) {
         udp.send(getDeviceNameFormBoard());
         return udp.receiveString();
@@ -291,6 +311,8 @@ public class PacketUtils {
                 return RinaBoardApp.SystemState.VideoMode;
             case RecognitionMode:
                 return RinaBoardApp.SystemState.RecognitionMode;
+            case DamageMode:
+                return RinaBoardApp.SystemState.DamageMode;
         }
         return null;
     }
@@ -336,6 +358,16 @@ public class PacketUtils {
         return recombinePackage(CmdType.Set, DataName.LIGHTBRIGHTNESSOVER);
     }
 
+    public static byte[] setDamageLightStateToBoard(boolean lightIsOn){
+        byte[] data = new byte[1];
+        data[0] = (byte) (lightIsOn ? 1 : 0);
+        return recombinePackage(CmdType.Set, DataName.DAMAGELIGHTSTATE, data, (byte) 1);
+    }
+
+    public static byte[] setDamageWordsToBoard(String words){
+        return recombinePackage(CmdType.Set, DataName.DAMAGELWORDS, words.getBytes(StandardCharsets.UTF_8), (byte) words.getBytes(StandardCharsets.UTF_8).length);
+    }
+
     public static byte[] setDeviceNameToBoard(String deviceName) {
         return recombinePackage(CmdType.Set, DataName.DEVICENAME, deviceName.getBytes(StandardCharsets.UTF_8), (byte) deviceName.getBytes(StandardCharsets.UTF_8).length);
     }
@@ -360,6 +392,8 @@ public class PacketUtils {
             case RecognitionMode:
                 data[0] = RecognitionMode;
                 break;
+            case DamageMode:
+                data[0] = DamageMode;
         }
         return recombinePackage(CmdType.Set, DataName.SYSTEMSTATE, data, (byte) 1);
     }
@@ -390,6 +424,14 @@ public class PacketUtils {
         return recombinePackage(CmdType.Get, DataName.LIGHTBRIGHTNESS);
     }
 
+    public static byte[] getDamageLightStateFromBoard(){
+        return recombinePackage(CmdType.Get, DataName.DAMAGELIGHTSTATE);
+    }
+
+    public static byte[] getDamageWordsFromBoard(){
+        return recombinePackage(CmdType.Get, DataName.DAMAGELWORDS);
+    }
+
     public static byte[] getBatteryVoltageFromBoard() {
         return recombinePackage(CmdType.Get, DataName.ELECTRICITY);
     }
@@ -412,8 +454,7 @@ public class PacketUtils {
 
     //——————————————————————————————————————— 指令包重构 ——————————————————————————————————————————————
     //指令结构：1byte:读或写+数据名 2byte：数据长度 3byte - ∞byte(可有可无按照情况定)，数据包
-    private static byte[] recombinePackage(CmdType cmd, DataName dataName, byte[] data, byte dataSize) {
-        byte[] combinedPackage = new byte[dataSize + 2];//数据包包含前两个byte加后面的数据包，所以长度为dataSize+2
+    private static byte[] recombinePackage(CmdType cmd, DataName dataName, byte[] data, byte dataSize) {byte[] combinedPackage = new byte[dataSize + 2];//数据包包含前两个byte加后面的数据包，所以长度为dataSize+2
 
         switch (cmd) {//设置第一位表示读写状态
             case Set:
@@ -466,6 +507,12 @@ public class PacketUtils {
                 break;
             case ELECTRICITY:
                 combinedPackage[0] |= Electricity;
+                break;
+            case DAMAGELIGHTSTATE:
+                combinedPackage[0] |= DamageLightState;
+                break;
+            case DAMAGELWORDS:
+                combinedPackage[0] |= DamageWords;
                 break;
             case DEVICENAME:
                 combinedPackage[0] |= DeviceName;
@@ -566,6 +613,12 @@ public class PacketUtils {
             case ELECTRICITY:
                 combinedPackage[0] |= Electricity;
                 break;
+            case DAMAGELIGHTSTATE:
+                combinedPackage[0] |= DamageLightState;
+                break;
+            case DAMAGELWORDS:
+                combinedPackage[0] |= DamageWords;
+                break;
             case DEVICENAME:
                 combinedPackage[0] |= DeviceName;
                 break;
@@ -622,6 +675,9 @@ enum DataName {
     LIGHTSTATE,
     LIGHTBRIGHTNESS,
     LIGHTBRIGHTNESSOVER,
+
+    DAMAGELIGHTSTATE,
+    DAMAGELWORDS,
 
     ELECTRICITY,
 
