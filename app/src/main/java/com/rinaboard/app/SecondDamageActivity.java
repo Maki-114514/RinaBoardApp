@@ -24,6 +24,7 @@ public class SecondDamageActivity extends AppCompatActivity {
     private EditText et_editWords;
     private UDPInteraction udp1;
     private ConnectThread connectThread1;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -42,7 +43,7 @@ public class SecondDamageActivity extends AppCompatActivity {
                         System.out.println("Connect success");
                         System.out.println();
 
-                        if(udp1 != null){
+                        if (udp1 != null) {
                             //获取系统信息
                             app.setDeviceName(GetDeviceName(udp1));
                             app.setDeviceType(GetDeviceType(udp1));
@@ -75,7 +76,7 @@ public class SecondDamageActivity extends AppCompatActivity {
                                         iv_batteryDisplay.setImageResource(R.drawable.battery_2);
                                     } else if (voltage >= 3.5f) {
                                         iv_batteryDisplay.setImageResource(R.drawable.battery_1);
-                                    }else {
+                                    } else {
                                         iv_batteryDisplay.setImageResource(R.drawable.battery_0);
                                     }
                                 }
@@ -141,7 +142,7 @@ public class SecondDamageActivity extends AppCompatActivity {
                             iv_batteryDisplay.setImageResource(R.drawable.battery_2);
                         } else if (voltage >= 3.5f) {
                             iv_batteryDisplay.setImageResource(R.drawable.battery_1);
-                        }else {
+                        } else {
                             iv_batteryDisplay.setImageResource(R.drawable.battery_0);
                         }
                     }
@@ -152,7 +153,8 @@ public class SecondDamageActivity extends AppCompatActivity {
         initView();
         updateView();
     }
-    private void initView(){
+
+    private void initView() {
         RinaBoardApp app = (RinaBoardApp) getApplication();
 
         bt_mainPage = findViewById(R.id.bt_mainPage);
@@ -197,7 +199,7 @@ public class SecondDamageActivity extends AppCompatActivity {
             iv_batteryDisplay.setImageResource(R.drawable.battery_2);
         } else if (voltage >= 3.5f) {
             iv_batteryDisplay.setImageResource(R.drawable.battery_1);
-        }else {
+        } else {
             iv_batteryDisplay.setImageResource(R.drawable.battery_0);
         }
 
@@ -209,10 +211,10 @@ public class SecondDamageActivity extends AppCompatActivity {
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
-                        if(isChecked){
+                        if (isChecked) {
                             app.setDamageLightState(true);
                             udp1.send(setDamageLightStateToBoard(true));
-                        }else {
+                        } else {
                             app.setDamageLightState(false);
                             udp1.send(setDamageLightStateToBoard(false));
                         }
@@ -225,14 +227,29 @@ public class SecondDamageActivity extends AppCompatActivity {
         // 创建一个InputFilter
         // 设置输入类型为英文
         et_editWords.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_CAP_WORDS);
+        et_editWords.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                app.setDamageWords(s.toString());
+            }
+        });
 
         bt_updateWords = findViewById(R.id.bt_updateWords);
         bt_updateWords.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 String words = et_editWords.getText().toString();
-                if(!words.isEmpty()){
+                if (!words.isEmpty()) {
                     app.setDamageWords(words);
                     new Thread(new Runnable() {
                         @Override
@@ -244,9 +261,11 @@ public class SecondDamageActivity extends AppCompatActivity {
             }
         });
     }
-    private void updateView(){
+
+    private void updateView() {
         RinaBoardApp app = (RinaBoardApp) getApplication();
 
         sw_damageLightState.setChecked(app.getDamageLightState());
+        et_editWords.setText(app.getDamageWords());
     }
 }
