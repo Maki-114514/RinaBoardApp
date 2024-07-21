@@ -110,11 +110,11 @@ public class ThirdActivity extends AppCompatActivity {
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                AlertDialog.Builder builder = new AlertDialog.Builder(ThirdActivity.this);
-                                builder.setTitle("警告");
-                                builder.setMessage("璃奈板连接丢失");
-                                AlertDialog alertDialog = builder.create();
-                                alertDialog.show();
+//                                AlertDialog.Builder builder = new AlertDialog.Builder(ThirdActivity.this);
+//                                builder.setTitle("警告");
+//                                builder.setMessage("璃奈板连接丢失");
+//                                AlertDialog alertDialog = builder.create();
+//                                alertDialog.show();
 
                                 updateView(state);
                             }

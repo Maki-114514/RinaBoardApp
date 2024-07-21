@@ -104,7 +104,7 @@ public class SecondDamageActivity extends AppCompatActivity {
                         app.setDamageLightState(false);
                         app.setDamageWords("");
 
-                        runOnUiThread(new Runnable() {
+                        /*runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
                                 AlertDialog.Builder builder = new AlertDialog.Builder(SecondDamageActivity.this);
@@ -121,7 +121,7 @@ public class SecondDamageActivity extends AppCompatActivity {
                                 AlertDialog alertDialog = builder.create();
                                 alertDialog.show();
                             }
-                        });
+                        });*/
                         System.out.println("View Update!");
                 }
             }

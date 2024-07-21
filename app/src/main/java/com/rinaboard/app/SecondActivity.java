@@ -111,11 +111,11 @@ public class SecondActivity extends AppCompatActivity {
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                AlertDialog.Builder builder = new AlertDialog.Builder(SecondActivity.this);
+                                /*AlertDialog.Builder builder = new AlertDialog.Builder(SecondActivity.this);
                                 builder.setTitle("警告");
                                 builder.setMessage("璃奈板连接丢失");
                                 AlertDialog alertDialog = builder.create();
-                                alertDialog.show();
+                                alertDialog.show();*/
                                 updateView(state);
                             }
                         });

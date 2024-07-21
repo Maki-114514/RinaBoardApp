@@ -139,7 +139,7 @@ public class SecondVideoActivity extends AppCompatActivity {
                         app.setDamageLightState(false);
                         app.setDamageWords("");
 
-                        runOnUiThread(new Runnable() {
+                        /*runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
                                 AlertDialog.Builder builder = new AlertDialog.Builder(SecondVideoActivity.this);
@@ -156,7 +156,7 @@ public class SecondVideoActivity extends AppCompatActivity {
                                 AlertDialog alertDialog = builder.create();
                                 alertDialog.show();
                             }
-                        });
+                        });*/
                         System.out.println("View Update!");
                 }
             }

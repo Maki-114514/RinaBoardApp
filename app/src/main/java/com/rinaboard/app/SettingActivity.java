@@ -135,11 +135,11 @@ public class SettingActivity extends AppCompatActivity {
                                     iv_batteryDisplay.setImageResource(R.drawable.battery_0);
                                 }
 
-                                AlertDialog.Builder builder = new AlertDialog.Builder(SettingActivity.this);
+                                /*AlertDialog.Builder builder = new AlertDialog.Builder(SettingActivity.this);
                                 builder.setTitle("警告");
                                 builder.setMessage("璃奈板连接丢失");
                                 AlertDialog alertDialog = builder.create();
-                                alertDialog.show();
+                                alertDialog.show();*/
                             }
                         });
                         System.out.println("View Update!");

@@ -113,11 +113,11 @@ public class MainActivity extends AppCompatActivity {
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+                                /*AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
                                 builder.setTitle("警告");
                                 builder.setMessage("璃奈板连接丢失");
                                 AlertDialog alertDialog = builder.create();
-                                alertDialog.show();
+                                alertDialog.show();*/
 
                                 updateView(state);
                             }
@@ -144,7 +144,7 @@ public class MainActivity extends AppCompatActivity {
                             iv_batteryDisplay.setImageResource(R.drawable.battery_2);
                         } else if (voltage >= 3.5f) {
                             iv_batteryDisplay.setImageResource(R.drawable.battery_1);
-                        }else {
+                        } else {
                             iv_batteryDisplay.setImageResource(R.drawable.battery_0);
                         }
                     }
@@ -279,7 +279,7 @@ public class MainActivity extends AppCompatActivity {
         sw_damageMode.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if(isChecked){
+                if (isChecked) {
                     sw_videoMode.setChecked(false);
                     sw_expMode.setChecked(false);
                     sw_recognitionMode.setChecked(false);
@@ -456,7 +456,7 @@ public class MainActivity extends AppCompatActivity {
             iv_batteryDisplay.setImageResource(R.drawable.battery_2);
         } else if (voltage >= 3.5f) {
             iv_batteryDisplay.setImageResource(R.drawable.battery_1);
-        }else {
+        } else {
             iv_batteryDisplay.setImageResource(R.drawable.battery_0);
         }
 
