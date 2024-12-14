@@ -5,12 +5,17 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.media.MediaScannerConnection;
+import android.os.Environment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.*;
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -449,6 +454,43 @@ public class SecondActivity extends AppCompatActivity {
             }
         });
         layout.addView(bt_saveToApp);
+
+
+        // 第三个按钮：保存为图片
+        Button bt_saveAsImage = new Button(this);
+        bt_saveAsImage.setText("保存到相册");
+        bt_saveAsImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String bitmapName = editText.getText().toString();
+                if (!bitmapName.isEmpty()) {
+                    Bitmap bitmap = convertByteArrayToBitmap(app.getEditBitmap(), 18, 16, app.getCustomColor()); // 获取需要保存的位图
+                    String fileName = bitmapName + ".png";
+
+                    File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), fileName);
+                    try {
+                        FileOutputStream fos = new FileOutputStream(file);
+                        bitmap.compress(Bitmap.CompressFormat.PNG, 100, fos);
+                        fos.close();
+
+                        // 通知系统媒体库更新
+                        MediaScannerConnection.scanFile(
+                                getApplicationContext(),
+                                new String[]{file.getAbsolutePath()},
+                                new String[]{"image/png"},
+                                null
+                        );
+
+                        Toast.makeText(getApplicationContext(), "图片保存到相册成功", Toast.LENGTH_SHORT).show();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                        Toast.makeText(getApplicationContext(), "图片保存失败", Toast.LENGTH_SHORT).show();
+                    }
+                    dialog[0].dismiss();
+                }
+            }
+        });
+        layout.addView(bt_saveAsImage);
 
         // 将EditText和自定义按钮布局添加到对话框中
         LinearLayout dialogLayout = new LinearLayout(this);
