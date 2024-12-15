@@ -14,6 +14,10 @@ import com.flask.colorpicker.ColorPickerView;
 import com.flask.colorpicker.builder.ColorPickerClickListener;
 import com.flask.colorpicker.builder.ColorPickerDialogBuilder;
 
+import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.Map;
+
 import static com.rinaboard.app.RinaBoardApp.SystemState.*;
 import static com.rinaboard.app.PacketUtils.*;
 
@@ -33,6 +37,8 @@ public class MainActivity extends AppCompatActivity {
     private Switch sw_damageMode;
     private Button bt_lastExp;
     private Button bt_nextExp;
+    private Button bt_lastAppExp;
+    private Button bt_nextAppExp;
     private Button bt_selectColor;
     private SeekBar sb_boardBrightness;
     private Button bt_resetColor;
@@ -41,6 +47,7 @@ public class MainActivity extends AppCompatActivity {
     private UDPInteraction udp1;
     private ConnectThread connectThread1;
     private RinaBoardApp.SystemState mode;
+    Map<String, byte[]>[] map;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -152,6 +159,12 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        map = new Map[]{ExpressionFileManager.getMapFromJson(getApplicationContext())};
+        app.setBitmapNameLinkedList(new LinkedList<>(Arrays.asList(ExpressionFileManager.getAllKeysFromMap(map[0]))));
+        if(!app.getBitmapNameLinkedList().isEmpty())
+        {
+            app.setBitmapNameInApp(app.getBitmapNameLinkedList().getFirst());
+        }
 
         //UI的init需要放在最后，否则在建立需要用到udp通讯的监听时，会出现udp1 = null而报错重启程序的情况
         initView();
@@ -315,6 +328,64 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void run() {
                         NextExpression(udp1);
+                    }
+                }).start();
+            }
+        });
+
+        //手机上切换表情
+        bt_lastAppExp = findViewById(R.id.bt_lastAppExp);
+        bt_nextAppExp = findViewById(R.id.bt_nextAppExp);
+        bt_lastAppExp.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (app.getBitmapNameLinkedList().isEmpty() || app.getBitmapNameInApp() == null) {
+                            return;
+                        }
+
+                        int index = app.getBitmapNameLinkedList().indexOf(app.getBitmapNameInApp());
+                        if (index == -1) {
+                            return;
+                        }
+                        String previousBitmapName = (index > 0) ? app.getBitmapNameLinkedList().get(index - 1) : app.getBitmapNameLinkedList().get(app.getBitmapNameLinkedList().size() - 1);
+                        if(previousBitmapName != null)
+                        {
+                            app.setBitmapNameInApp(previousBitmapName);
+                        }
+                        byte[] bitmap = map[0].get(app.getBitmapNameInApp());
+                        app.setEditBitmap(bitmap);
+                        byte[] data = setBitmapToBoard(app.getEditBitmap());
+                        udp1.send(data);
+                    }
+                }).start();
+            }
+        });
+        bt_nextAppExp.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (app.getBitmapNameLinkedList().isEmpty() || app.getBitmapNameInApp() == null) {
+                            return;
+                        }
+
+                        int index = app.getBitmapNameLinkedList().indexOf(app.getBitmapNameInApp());
+                        if (index == -1) {
+                            return;
+                        }
+                        String nextNode = (index < app.getBitmapNameLinkedList().size() - 1) ? app.getBitmapNameLinkedList().get(index + 1) : app.getBitmapNameLinkedList().get(0);
+                        if(nextNode != null)
+                        {
+                            app.setBitmapNameInApp(nextNode);
+                        }
+                        byte[] bitmap = map[0].get(app.getBitmapNameInApp());
+                        app.setEditBitmap(bitmap);
+                        byte[] data = setBitmapToBoard(app.getEditBitmap());
+                        udp1.send(data);
                     }
                 }).start();
             }
@@ -516,6 +587,8 @@ public class MainActivity extends AppCompatActivity {
         sw_damageMode.setEnabled(true);
         bt_lastExp.setEnabled(true);
         bt_nextExp.setEnabled(true);
+        bt_lastAppExp.setEnabled(true);
+        bt_nextAppExp.setEnabled(true);
         bt_selectColor.setEnabled(true);
         sb_boardBrightness.setEnabled(true);
         bt_resetColor.setEnabled(true);
@@ -530,6 +603,8 @@ public class MainActivity extends AppCompatActivity {
         sw_damageMode.setEnabled(false);
         bt_lastExp.setEnabled(false);
         bt_nextExp.setEnabled(false);
+        bt_lastAppExp.setEnabled(false);
+        bt_nextAppExp.setEnabled(false);
         bt_selectColor.setEnabled(false);
         sb_boardBrightness.setEnabled(false);
         bt_resetColor.setEnabled(false);

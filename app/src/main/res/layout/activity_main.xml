@@ -173,7 +173,7 @@
 
 		<LinearLayout
 			android:layout_width="match_parent"
-			android:layout_height="80dp"
+			android:layout_height="60dp"
 			android:gravity="center">
 			<Button
 				android:layout_width="wrap_content"
@@ -192,7 +192,27 @@
 				android:text="下一个表情">
 			</Button>
 		</LinearLayout>
-
+		<LinearLayout
+			android:layout_width="match_parent"
+			android:layout_height="50dp"
+			android:gravity="center">
+			<Button
+				android:layout_width="wrap_content"
+				android:id="@+id/bt_lastAppExp"
+				android:enabled="false"
+				android:layout_height="wrap_content"
+				android:layout_marginHorizontal="10dp"
+				android:text="手机上一个表情">
+			</Button>
+			<Button
+				android:layout_width="wrap_content"
+				android:id="@+id/bt_nextAppExp"
+				android:enabled="false"
+				android:layout_height="wrap_content"
+				android:layout_marginHorizontal="10dp"
+				android:text="手机下一个表情">
+			</Button>
+		</LinearLayout>
 		<LinearLayout
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"

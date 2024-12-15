@@ -43,7 +43,9 @@ public class SecondVideoActivity extends AppCompatActivity {
     private Button bt_updateVideo;
     private Button bt_controlVideo;
     private Switch sw_rollBack;
+    private Switch sw_circulate;
     private boolean rollBackIsOn = false;
+    private boolean circulateIsOn = false;
     private TextureView tv_video;
     private Uri videoUri;
     private MediaPlayer mediaPlayer;
@@ -209,7 +211,12 @@ public class SecondVideoActivity extends AppCompatActivity {
                     mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
                         @Override
                         public void onCompletion(MediaPlayer mp) {
-                            bt_controlVideo.setText("重新播放");
+                            if(circulateIsOn){
+                                mediaPlayer.seekTo(0);
+                                mediaPlayer.start();
+                            }else {
+                                bt_controlVideo.setText("重新播放");
+                            }
                         }
                     });
 
@@ -360,6 +367,14 @@ public class SecondVideoActivity extends AppCompatActivity {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 rollBackIsOn = isChecked;
+            }
+        });
+
+        sw_circulate = findViewById(R.id.sw_circulate);
+        sw_circulate.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                circulateIsOn = isChecked;
             }
         });
 

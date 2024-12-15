@@ -4,7 +4,9 @@ import android.app.Application;
 import android.graphics.Color;
 
 import java.net.*;
+import java.util.Arrays;
 import java.util.LinkedList;
+import java.util.Map;
 
 import static com.rinaboard.app.PacketUtils.*;
 import static com.rinaboard.app.PacketUtils.GetLightBrightness;
@@ -33,6 +35,8 @@ public class RinaBoardApp extends Application {
     private byte[] editBitmap = new byte[ROWS * rowBytes];
     private float batteryVoltage = 0.0f;
     private LinkedList<StartAnime> startAnimeLinkedList = new LinkedList<>();
+    private LinkedList<String> bitmapNameLinkedList;
+    private String bitmapNameInApp;
 
     @Override
     public void onCreate() {
@@ -44,6 +48,13 @@ public class RinaBoardApp extends Application {
         //创建expression.json文件用于存储表情的键值对
         ExpressionFileManager.createExpressionJsonFile(getApplicationContext());
         StartAnimeFileManager.createStartAnimeJsonFile(getApplicationContext());
+
+        Map<String, byte[]>[] map = new Map[]{ExpressionFileManager.getMapFromJson(getApplicationContext())};
+        bitmapNameLinkedList = new LinkedList<>(Arrays.asList(ExpressionFileManager.getAllKeysFromMap(map[0])));
+        if(!bitmapNameLinkedList.isEmpty())
+        {
+            bitmapNameInApp = bitmapNameLinkedList.getFirst();
+        }
     }
 
     public static RinaBoardApp getInstance() {
@@ -247,6 +258,22 @@ public class RinaBoardApp extends Application {
 
     public void setDamageLightState(boolean damageLightState) {
         this.damageLightState = damageLightState;
+    }
+
+    public LinkedList<String> getBitmapNameLinkedList() {
+        return bitmapNameLinkedList;
+    }
+
+    public void setBitmapNameLinkedList(LinkedList<String> bitmapNameLinkedList) {
+        this.bitmapNameLinkedList = bitmapNameLinkedList;
+    }
+
+    public String getBitmapNameInApp() {
+        return bitmapNameInApp;
+    }
+
+    public void setBitmapNameInApp(String bitmapNameInApp) {
+        this.bitmapNameInApp = bitmapNameInApp;
     }
 
     public enum SystemState {
